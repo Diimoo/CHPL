@@ -309,4 +309,4 @@ Brain-inspired learning achieves not only functional performance but also *recap
 
 ### C. Code Availability
 
-All code, data, and trained models are available at: https://github.com/Diimoo/CHPL-Updated
+All code, data, and trained models are available at: https://github.com/Diimoo/CHPL
