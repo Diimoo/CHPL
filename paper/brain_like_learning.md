@@ -1,7 +1,7 @@
 # Brain-Like Visual Learning Shows Emergent Developmental Bias and Implicit Regularization
 
-**Author Name**  
-Ahmed Trabelsi
+**Ahmed Trabelsi**  
+hi@locentia.com
 
 
 ---
