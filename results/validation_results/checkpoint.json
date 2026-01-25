@@ -1,0 +1,342 @@
+[
+  {
+    "seed": 0,
+    "timestamp": "2026-01-25T18:46:19.449391",
+    "conditions": {
+      "full": {
+        "bias_score": 1.1703782182581108,
+        "same_color_diff_shape": 0.8873664811253548,
+        "diff_color_same_shape": 0.7581877854342262,
+        "binding_rate": 62.5,
+        "n_concepts": 2.0,
+        "time_seconds": 33.4102840423584
+      },
+      "no_reconstruction": {
+        "bias_score": 1.0056711488916812,
+        "same_color_diff_shape": 0.989812026421229,
+        "diff_color_same_shape": 0.9842302997907003,
+        "binding_rate": 100.0,
+        "n_concepts": 1.0,
+        "time_seconds": 27.622632265090942
+      },
+      "no_consolidation": {
+        "bias_score": 1.1788103699750077,
+        "same_color_diff_shape": 0.8549200370907784,
+        "diff_color_same_shape": 0.7252396543820699,
+        "binding_rate": 43.75,
+        "n_concepts": 10.0,
+        "time_seconds": 28.73120617866516
+      },
+      "backprop": {
+        "bias_score": 2.815835989760122,
+        "time_seconds": 24.65372323989868
+      }
+    }
+  },
+  {
+    "seed": 1,
+    "timestamp": "2026-01-25T18:48:14.835528",
+    "conditions": {
+      "full": {
+        "bias_score": 1.1403151414693173,
+        "same_color_diff_shape": 0.8457144722342491,
+        "diff_color_same_shape": 0.7416497686256965,
+        "binding_rate": 50.0,
+        "n_concepts": 3.0,
+        "time_seconds": 33.168039083480835
+      },
+      "no_reconstruction": {
+        "bias_score": 1.0067016799299342,
+        "same_color_diff_shape": 0.9853034242987633,
+        "diff_color_same_shape": 0.978744183977445,
+        "binding_rate": 100.0,
+        "n_concepts": 1.0,
+        "time_seconds": 27.10116696357727
+      },
+      "no_consolidation": {
+        "bias_score": 1.1640847762122655,
+        "same_color_diff_shape": 0.9280646120508512,
+        "diff_color_same_shape": 0.7972482927143574,
+        "binding_rate": 31.25,
+        "n_concepts": 8.0,
+        "time_seconds": 30.43720245361328
+      },
+      "backprop": {
+        "bias_score": 1.8494258732366065,
+        "time_seconds": 26.298028707504272
+      }
+    }
+  },
+  {
+    "seed": 2,
+    "timestamp": "2026-01-25T18:50:12.812471",
+    "conditions": {
+      "full": {
+        "bias_score": 1.326647451948476,
+        "same_color_diff_shape": 0.8863522186875343,
+        "diff_color_same_shape": 0.6681143540578584,
+        "binding_rate": 62.5,
+        "n_concepts": 2.0,
+        "time_seconds": 32.59185862541199
+      },
+      "no_reconstruction": {
+        "bias_score": 1.0208358257320973,
+        "same_color_diff_shape": 0.9868915726741155,
+        "diff_color_same_shape": 0.966748557984829,
+        "binding_rate": 100.0,
+        "n_concepts": 1.0,
+        "time_seconds": 27.63474202156067
+      },
+      "no_consolidation": {
+        "bias_score": 1.1393127308395248,
+        "same_color_diff_shape": 0.8421731342871984,
+        "diff_color_same_shape": 0.7391939895848433,
+        "binding_rate": 43.75,
+        "n_concepts": 5.0,
+        "time_seconds": 29.299685955047607
+      },
+      "backprop": {
+        "bias_score": 1.947558628746057,
+        "time_seconds": 25.09593152999878
+      }
+    }
+  },
+  {
+    "seed": 3,
+    "timestamp": "2026-01-25T18:52:08.389277",
+    "conditions": {
+      "full": {
+        "bias_score": 1.1240722969191626,
+        "same_color_diff_shape": 0.8067731782793999,
+        "diff_color_same_shape": 0.7177235567942262,
+        "binding_rate": 75.0,
+        "n_concepts": 3.0,
+        "time_seconds": 32.08306908607483
+      },
+      "no_reconstruction": {
+        "bias_score": 1.0111341256630515,
+        "same_color_diff_shape": 0.990539900958538,
+        "diff_color_same_shape": 0.979632539053758,
+        "binding_rate": 100.0,
+        "n_concepts": 1.0,
+        "time_seconds": 28.060158014297485
+      },
+      "no_consolidation": {
+        "bias_score": 1.4173072200398462,
+        "same_color_diff_shape": 0.8823054606715838,
+        "diff_color_same_shape": 0.6225223677853743,
+        "binding_rate": 31.25,
+        "n_concepts": 9.0,
+        "time_seconds": 28.774942874908447
+      },
+      "backprop": {
+        "bias_score": 1.6021814489641897,
+        "time_seconds": 24.884918689727783
+      }
+    }
+  },
+  {
+    "seed": 4,
+    "timestamp": "2026-01-25T18:54:03.160421",
+    "conditions": {
+      "full": {
+        "bias_score": 1.2574295416321533,
+        "same_color_diff_shape": 0.8834898993372917,
+        "diff_color_same_shape": 0.7026158186296622,
+        "binding_rate": 50.0,
+        "n_concepts": 3.0,
+        "time_seconds": 31.935206413269043
+      },
+      "no_reconstruction": {
+        "bias_score": 1.0188659101719482,
+        "same_color_diff_shape": 0.9877180655797323,
+        "diff_color_same_shape": 0.9694288969039917,
+        "binding_rate": 100.0,
+        "n_concepts": 1.0,
+        "time_seconds": 27.354235410690308
+      },
+      "no_consolidation": {
+        "bias_score": 1.114808188532936,
+        "same_color_diff_shape": 0.845560776690642,
+        "diff_color_same_shape": 0.7584809424976507,
+        "binding_rate": 50.0,
+        "n_concepts": 5.0,
+        "time_seconds": 29.09518575668335
+      },
+      "backprop": {
+        "bias_score": 1.8043949542988973,
+        "time_seconds": 25.602317810058594
+      }
+    }
+  },
+  {
+    "seed": 5,
+    "timestamp": "2026-01-25T18:55:58.131358",
+    "conditions": {
+      "full": {
+        "bias_score": 1.1077104652975491,
+        "same_color_diff_shape": 0.8870955482125282,
+        "diff_color_same_shape": 0.8008370101451874,
+        "binding_rate": 62.5,
+        "n_concepts": 2.0,
+        "time_seconds": 32.04597234725952
+      },
+      "no_reconstruction": {
+        "bias_score": 1.0326321840679855,
+        "same_color_diff_shape": 0.981872595846653,
+        "diff_color_same_shape": 0.9508444542686144,
+        "binding_rate": 100.0,
+        "n_concepts": 1.0,
+        "time_seconds": 27.3527193069458
+      },
+      "no_consolidation": {
+        "bias_score": 1.4348915436344165,
+        "same_color_diff_shape": 0.9119188562035561,
+        "diff_color_same_shape": 0.6355315465480089,
+        "binding_rate": 43.75,
+        "n_concepts": 6.0,
+        "time_seconds": 28.94538426399231
+      },
+      "backprop": {
+        "bias_score": 3.206823534832225,
+        "time_seconds": 24.510557413101196
+      }
+    }
+  },
+  {
+    "seed": 6,
+    "timestamp": "2026-01-25T18:57:51.914707",
+    "conditions": {
+      "full": {
+        "bias_score": 1.2816595018254529,
+        "same_color_diff_shape": 0.8707530523339907,
+        "diff_color_same_shape": 0.6793949861700336,
+        "binding_rate": 75.0,
+        "n_concepts": 4.0,
+        "time_seconds": 31.87849736213684
+      },
+      "no_reconstruction": {
+        "bias_score": 1.0243193649162508,
+        "same_color_diff_shape": 0.9809309542179108,
+        "diff_color_same_shape": 0.9576417058706284,
+        "binding_rate": 100.0,
+        "n_concepts": 1.0,
+        "time_seconds": 27.71070647239685
+      },
+      "no_consolidation": {
+        "bias_score": 1.039886846373094,
+        "same_color_diff_shape": 0.8120010991891226,
+        "diff_color_same_shape": 0.7808552359541258,
+        "binding_rate": 68.75,
+        "n_concepts": 6.0,
+        "time_seconds": 28.72791600227356
+      },
+      "backprop": {
+        "bias_score": 2.2390571268355797,
+        "time_seconds": 24.300259351730347
+      }
+    }
+  },
+  {
+    "seed": 7,
+    "timestamp": "2026-01-25T18:59:45.419873",
+    "conditions": {
+      "full": {
+        "bias_score": 1.2488010000555363,
+        "same_color_diff_shape": 0.9006274143854777,
+        "diff_color_same_shape": 0.7211936904738346,
+        "binding_rate": 56.25,
+        "n_concepts": 2.0,
+        "time_seconds": 32.32182860374451
+      },
+      "no_reconstruction": {
+        "bias_score": 1.0270636134523905,
+        "same_color_diff_shape": 0.9878203396995863,
+        "diff_color_same_shape": 0.9617907951275507,
+        "binding_rate": 100.0,
+        "n_concepts": 1.0,
+        "time_seconds": 26.93511414527893
+      },
+      "no_consolidation": {
+        "bias_score": 1.201980208705818,
+        "same_color_diff_shape": 0.8491969630122185,
+        "diff_color_same_shape": 0.7064982807884613,
+        "binding_rate": 62.5,
+        "n_concepts": 1.0,
+        "time_seconds": 29.364769220352173
+      },
+      "backprop": {
+        "bias_score": 2.619610219912974,
+        "time_seconds": 25.543302536010742
+      }
+    }
+  },
+  {
+    "seed": 8,
+    "timestamp": "2026-01-25T19:01:40.546467",
+    "conditions": {
+      "full": {
+        "bias_score": 1.2109539782693126,
+        "same_color_diff_shape": 0.8808807830015818,
+        "diff_color_same_shape": 0.7274271249771118,
+        "binding_rate": 62.5,
+        "n_concepts": 2.0,
+        "time_seconds": 32.27260208129883
+      },
+      "no_reconstruction": {
+        "bias_score": 1.0389071362160258,
+        "same_color_diff_shape": 0.9793499186635017,
+        "diff_color_same_shape": 0.9426731939117113,
+        "binding_rate": 100.0,
+        "n_concepts": 1.0,
+        "time_seconds": 26.971271276474
+      },
+      "no_consolidation": {
+        "bias_score": 0.8951008414801093,
+        "same_color_diff_shape": 0.884282760322094,
+        "diff_color_same_shape": 0.9879141102234522,
+        "binding_rate": 12.5,
+        "n_concepts": 3.0,
+        "time_seconds": 28.961721897125244
+      },
+      "backprop": {
+        "bias_score": 2.2344389145027184,
+        "time_seconds": 24.924894094467163
+      }
+    }
+  },
+  {
+    "seed": 9,
+    "timestamp": "2026-01-25T19:03:34.655262",
+    "conditions": {
+      "full": {
+        "bias_score": 1.4025079659938597,
+        "same_color_diff_shape": 0.8933342521389326,
+        "diff_color_same_shape": 0.6369548407383263,
+        "binding_rate": 68.75,
+        "n_concepts": 4.0,
+        "time_seconds": 34.8417432308197
+      },
+      "no_reconstruction": {
+        "bias_score": 1.0168524924689668,
+        "same_color_diff_shape": 0.9874992072582245,
+        "diff_color_same_shape": 0.9711331824461619,
+        "binding_rate": 100.0,
+        "n_concepts": 1.0,
+        "time_seconds": 28.880784034729004
+      },
+      "no_consolidation": {
+        "bias_score": 1.1851824357873753,
+        "same_color_diff_shape": 0.8767144034306208,
+        "diff_color_same_shape": 0.7397294839223226,
+        "binding_rate": 56.25,
+        "n_concepts": 8.0,
+        "time_seconds": 31.317940950393677
+      },
+      "backprop": {
+        "bias_score": 2.1308356741863954,
+        "time_seconds": 26.508317232131958
+      }
+    }
+  }
+]
