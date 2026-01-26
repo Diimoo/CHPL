@@ -127,6 +127,12 @@ We compare our brain-inspired model against:
 **Control experiments:**
 - **Simultaneous training:** All modules trained from epoch 0 (vs phased training) to test whether the developmental trajectory is an artifact of training order.
 
+**Language ablation study (n=3 seeds, 1000 epochs each):**
+- **Visual-only:** No language or cross-modal training (Phases 2-3 disabled). Tests whether shape bias can emerge from reconstruction alone.
+- **Color-only labels:** Language trained on color words only ("red", "blue", "green"). Tests whether shape words are necessary.
+- **Shape-only labels:** Language trained on shape words only ("circle", "square", "triangle"). Tests whether shape labels accelerate shape learning.
+- **Full labels:** Standard training ("red circle", "blue square"). Baseline condition.
+
 ### 3.6 Statistical Analysis
 
 All experiments are repeated with n=10 random seeds for short training and n=3 seeds for extended training. We report mean ± standard deviation and perform two-tailed independent t-tests for between-condition comparisons and paired t-tests for within-model ablations. Effect sizes are reported as Cohen's d.
@@ -202,6 +208,28 @@ Results show **no significant difference** between phased and simultaneous train
 
 **Conclusion:** The color→shape trajectory is an **emergent property** of reconstruction-based learning, not an artifact of training order. This strengthens the parallel to infant development, where the trajectory arises from learning dynamics rather than external curriculum.
 
+### 4.6 Language Scaffolding is Necessary for Shape Bias Emergence
+
+Extended training (1000 epochs) with language ablations revealed that **language alignment is necessary** for shape bias to emerge (Figure 3).
+
+Without language training (visual-only), color bias persisted throughout training (final bias: 1.54±0.21). In contrast, all language conditions—regardless of label content—showed robust shape bias emergence (0.53-0.65). The difference between visual-only and language conditions was highly significant (d>4.5, p<0.01 for all comparisons).
+
+Among language conditions, shape-only labels showed a non-significant trend toward stronger shape bias (0.53±0.07) compared to color-only labels (0.65±0.07, p=0.16).
+
+**Table 3: Language Ablation Results (n=3 seeds, 1000 epochs)**
+
+| Condition | Final Bias | p vs Visual-only | Cohen's d |
+|-----------|------------|------------------|-----------|
+| Visual-only | 1.54±0.21 | — | — |
+| Color-only | 0.65±0.07 | 0.005 | 4.56 |
+| Shape-only | 0.53±0.07 | 0.003 | 5.23 |
+| Full | 0.64±0.06 | 0.005 | 4.66 |
+
+![Figure 3: Language Ablation Study](figure4_language_ablation.png)
+*Figure 3: Language ablation study. (A) Developmental trajectories by condition. Visual-only training (black) maintains color bias (>1.0) while all language conditions develop shape bias (<1.0). (B) Final bias comparison with error bars. All language conditions significantly differ from visual-only (p<0.01, d>4.5). Dashed line indicates neutral bias (1.0).*
+
+**Key finding:** Language alignment provides necessary scaffolding for shape bias emergence. Visual reconstruction alone is insufficient—it produces persistent color bias even after 1000 epochs. However, the specific content of language labels (color words vs shape words) does not significantly affect the outcome.
+
 ---
 
 ## 5. Discussion
@@ -238,7 +266,20 @@ $$\text{MSE}(\text{red circle}, \text{blue circle}) \gg \text{MSE}(\text{red cir
 
 Changing color affects nearly all pixels, while changing shape affects only boundary pixels. Thus, reconstruction loss produces larger gradients for color differences, leading to faster learning of color features. Shape features require more training to emerge because their gradients are smaller.
 
-### 5.4 Limitations
+### 5.4 Language as Scaffolding for Shape Learning
+
+The language ablation study reveals that cross-modal alignment is **necessary** for shape bias to emerge. Visual reconstruction alone produces persistent color bias (1.54±0.21) even after 1000 epochs, while all language conditions show robust shape bias (0.53-0.65, all p<0.01).
+
+Critically, this scaffolding effect does not depend on whether labels mention shapes: color-only labels ("red", "blue") produce nearly identical shape bias (0.65±0.07) as full labels (0.64±0.06). This suggests language provides a general discriminative pressure rather than explicit shape supervision.
+
+**Possible mechanisms:**
+1. **Regularization hypothesis:** Language alignment prevents overfitting to superficial features (color), forcing the visual system to learn more generalizable representations.
+2. **Discriminative pressure:** Cross-modal alignment requires visual features to support fine-grained distinctions between stimuli, which edges and shapes provide more reliably than color alone.
+3. **Attention mechanism:** Cross-modal binding may require attending to all features (both color and shape), rather than just the most salient ones.
+
+These mechanisms remain speculative and require further investigation. Future work could test whether other forms of regularization (dropout, weight decay) applied to visual-only training produce similar effects, which would support the regularization hypothesis.
+
+### 5.5 Limitations
 
 Several limitations warrant mention:
 
@@ -249,8 +290,11 @@ Several limitations warrant mention:
 - **Sample size for trajectory analysis.** Extended training used n=3 seeds due to computational constraints; larger samples would strengthen trajectory claims.
 - **No human behavioral comparison.** While we draw parallels to infant development, we did not directly compare to human experimental data.
 - **Single modality pair.** We only tested vision-language binding; auditory or tactile modalities may show different dynamics.
+- **Language ablation sample size.** The language ablation study used n=3 seeds per condition; while effect sizes were large (d>4.5), subtle differences between language conditions (e.g., color-only vs shape-only, p=0.16) would benefit from larger samples.
+- **Training epochs vs biological timescales.** Training for 1000 epochs may not directly correspond to biological developmental timescales; mapping computational to biological time remains an open challenge.
+- **Mechanism of language scaffolding unclear.** While we demonstrate language is necessary for shape bias emergence, the specific mechanism (regularization, discriminative pressure, attention) remains unidentified.
 
-### 5.5 Future Directions
+### 5.6 Future Directions
 
 1. **Compositional learning:** Can the model learn "red" and "circle" as separable concepts?
 2. **Natural images:** Does the developmental trajectory persist with realistic visual input?
@@ -265,13 +309,15 @@ We have demonstrated that brain-inspired learning rules—reconstruction-based p
 
 1. **Emergent developmental trajectory:** Extended training reveals a color→shape progression that recapitulates infant visual development, transitioning from neutral through peak color bias to reduction. Control experiments confirm this is not an artifact of phased training (p=0.99).
 
-2. **Objective matters more than learning rule:** Fair comparison with backprop-autoencoder shows similar bias when using the same reconstruction objective (p=0.66). The reduced bias compared to classification backprop stems from the objective, not from Hebbian learning per se.
+2. **Language scaffolding is necessary:** Visual reconstruction alone produces persistent color bias (1.54±0.21) even after 1000 epochs. Language alignment—regardless of label content—is required for shape bias emergence (all p<0.01, d>4.5). This suggests cross-modal learning provides essential scaffolding for visual feature development.
 
-3. **Mechanistic requirements:** Reconstruction prevents representational collapse; ATL consolidation improves cross-modal binding by 41% (p=0.01, d=1.44).
+3. **Objective matters more than learning rule:** Fair comparison with backprop-autoencoder shows similar bias when using the same reconstruction objective (p=0.66). The reduced bias compared to classification backprop stems from the objective, not from Hebbian learning per se.
 
-4. **Efficiency trade-off:** Backprop-autoencoder achieves 100% binding vs ~65% for brain-inspired learning, suggesting gradient optimization is more efficient, though brain-inspired approaches offer interpretability and biological plausibility.
+4. **Mechanistic requirements:** Reconstruction prevents representational collapse; ATL consolidation improves cross-modal binding by 41% (p=0.01, d=1.44).
 
-Brain-inspired learning achieves functional performance while *recapitulating known developmental phenomena*—a hallmark of biologically-relevant computational models. The emergent trajectory, confirmed not to be an artifact, provides computational support for theories linking reconstruction-based learning to perceptual development.
+5. **Efficiency trade-off:** Backprop-autoencoder achieves 100% binding vs ~65% for brain-inspired learning, suggesting gradient optimization is more efficient, though brain-inspired approaches offer interpretability and biological plausibility.
+
+Brain-inspired learning achieves functional performance while *recapitulating known developmental phenomena*—a hallmark of biologically-relevant computational models. The emergent trajectory, confirmed not to be an artifact, and the critical role of cross-modal scaffolding provide computational support for theories linking multimodal learning to perceptual development.
 
 ---
 
