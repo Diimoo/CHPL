@@ -8,7 +8,7 @@ hi@locentia.com
 
 ## Abstract
 
-Biological learning mechanisms remain poorly understood compared to supervised deep learning. We investigate whether brain-inspired plasticity rules can achieve cross-modal learning in a controlled synthetic environment. Using reconstruction-based predictive coding and Hebbian consolidation, our model learns to bind visual shapes with linguistic labels. Extended training reveals an **emergent developmental trajectory** from neutral (0.99) through peak color bias (1.32) to reduction (1.07), recapitulating infant visual development. Critically, control experiments with simultaneous training (p=0.99) confirm this trajectory is not an artifact of phased training. Fair baseline comparison with backprop-autoencoder (same reconstruction objective) shows similar final bias (1.18 vs 1.20, p=0.66), indicating the learning rule difference is less important than the training objective. Ablation studies identify reconstruction as necessary and ATL consolidation as critical (+41% binding, p=0.01, d=1.44). Our work demonstrates brain-inspired learning achieves meaningful cross-modal representations while spontaneously recapitulating developmental phenomena.
+Biological learning mechanisms remain poorly understood compared to supervised deep learning. We investigate whether brain-inspired plasticity rules can achieve cross-modal learning in a controlled synthetic environment. Using reconstruction-based predictive coding and Hebbian consolidation, our model learns to bind visual shapes with linguistic labels. Extended training reveals an **emergent developmental trajectory** from neutral (0.99) through peak color bias (1.32) to reduction (1.07), recapitulating infant visual development. **Language ablation experiments reveal that cross-modal alignment is necessary for shape bias emergence: visual reconstruction alone produces persistent color bias (1.54±0.21) while all language conditions show robust shape bias (0.53-0.65, d>4.5, p<0.01).** Critically, control experiments with simultaneous training (p=0.99) confirm this trajectory is not an artifact of phased training. Fair baseline comparison with backprop-autoencoder (same reconstruction objective) shows similar final bias (1.18 vs 1.20, p=0.66), indicating the learning rule difference is less important than the training objective. Ablation studies identify reconstruction as necessary and ATL consolidation as critical (+41% binding, p=0.01, d=1.44). Our work demonstrates brain-inspired learning achieves meaningful cross-modal representations while spontaneously recapitulating developmental phenomena.
 
 **Keywords:** brain-inspired learning, cross-modal binding, developmental trajectory, Hebbian plasticity, predictive coding, color bias
 
@@ -24,13 +24,13 @@ A particularly intriguing aspect of human visual development is the systematic p
 
 In this work, we ask: **Can brain-inspired plasticity rules achieve cross-modal learning from scratch, and if so, what emergent properties arise?** We address this question by developing a simplified neural architecture inspired by visual cortex, language cortex, and ATL, trained using reconstruction-based predictive coding and Hebbian consolidation. Our key contributions are:
 
-1. We demonstrate that brain-inspired learning achieves meaningful cross-modal binding (62.5% alignment) using reconstruction-based learning and Hebbian consolidation, without supervised classification.
+1. We discover an **emergent developmental trajectory** where color bias rises and then falls (neutral → peak → reduction), recapitulating infant visual development without explicit programming.
 
-2. We discover an **emergent developmental trajectory** where color bias rises and then falls (neutral → peak → reduction), recapitulating infant visual development without explicit programming.
+2. We demonstrate that **language alignment is necessary** for shape bias emergence. Visual reconstruction alone produces persistent color bias (1.54±0.21), while all language conditions—regardless of label content—show robust shape bias (0.53-0.65, all d>4.5, p<0.01).
 
 3. We provide **critical control experiments**: (a) simultaneous training shows the trajectory is not an artifact of phased training (p=0.99); (b) fair comparison with backprop-autoencoder shows similar bias when using the same objective (p=0.66), clarifying that the reconstruction objective—not the learning rule—drives reduced bias compared to classification.
 
-4. Through systematic ablations, we identify **mechanistic requirements**: reconstruction loss prevents collapse; ATL consolidation is critical for binding (+41%, p=0.01).
+4. Through systematic ablations, we identify **mechanistic requirements**: reconstruction prevents collapse; ATL consolidation improves binding (+41%, p=0.01, d=1.44).
 
 ---
 
@@ -174,7 +174,7 @@ To isolate the effect of learning rules, we compared against a **backprop-autoen
 
 **Key insight:** The reduced bias compared to classification backprop stems from the **reconstruction objective**, not from Hebbian learning per se. Both brain-inspired and backprop-autoencoder show similar bias when trained with reconstruction loss.
 
-![Figure 1: Ablation Results](figure2_ablation_results.png)
+![Figure 1: Ablation Results](figure2_ablation_results.pdf)
 *Figure 1: Ablation study results. (A) Color categorization bias across conditions. Brain-inspired learning shows lower bias than classification backprop, but similar bias to backprop-autoencoder (fair comparison). (B) Cross-modal binding rates. ATL consolidation provides 41% improvement (p=0.01, d=1.44). Error bars show ±1 SD.*
 
 Interestingly, the backprop-autoencoder achieves **100% binding rate** compared to ~65% for brain-inspired learning. This suggests end-to-end gradient optimization is more efficient for cross-modal alignment, though the brain-inspired approach may offer other benefits (interpretability, biological plausibility).
@@ -197,7 +197,7 @@ Extended training (100 epochs, n=3 seeds) reveals a striking developmental traje
 
 **Phase 3: Bias Reduction (Epochs 25-100).** Bias gradually decreases toward neutral (1.07 ± 0.02), suggesting shape features emerge with continued training.
 
-![Figure 2: Developmental Trajectory](figure3_developmental_trajectory.png)
+![Figure 2: Developmental Trajectory](figure3_developmental_trajectory.pdf)
 *Figure 2: Developmental trajectory over extended training (100 epochs). (A) Color bias emerges early (peak at epoch 25) then reduces toward neutral, recapitulating infant visual development. (B) Cross-modal binding rate stabilizes around 55%. (C) Active concept count increases as training progresses. Thin lines: individual seeds (n=3); thick line: mean; shading: ±1 SD.*
 
 ### 4.5 Control Experiment: Trajectory is Not an Artifact
@@ -226,7 +226,7 @@ Among language conditions, shape-only labels showed a non-significant trend towa
 | Full | 0.64±0.06 | 0.005 | 4.66 |
 
 ![Figure 3: Language Ablation Study](figure4_language_ablation.png)
-*Figure 3: Language ablation study. (A) Developmental trajectories by condition. Visual-only training (black) maintains color bias (>1.0) while all language conditions develop shape bias (<1.0). (B) Final bias comparison with error bars. All language conditions significantly differ from visual-only (p<0.01, d>4.5). Dashed line indicates neutral bias (1.0).*
+*Figure 3: Language ablation study. (A) Developmental trajectories by condition. Visual-only training (black) maintains color bias throughout (final: 1.54±0.21), while all language conditions converge to shape bias (final: 0.53-0.65). The separation between visual-only and language conditions is highly significant (d>4.5, p<0.01). (B) Final bias comparison with error bars (n=3 seeds per condition). Dashed line indicates neutral bias (1.0). Values below 1.0 indicate shape bias.*
 
 **Key finding:** Language alignment provides necessary scaffolding for shape bias emergence. Visual reconstruction alone is insufficient—it produces persistent color bias even after 1000 epochs. However, the specific content of language labels (color words vs shape words) does not significantly affect the outcome.
 
@@ -277,7 +277,7 @@ Critically, this scaffolding effect does not depend on whether labels mention sh
 2. **Discriminative pressure:** Cross-modal alignment requires visual features to support fine-grained distinctions between stimuli, which edges and shapes provide more reliably than color alone.
 3. **Attention mechanism:** Cross-modal binding may require attending to all features (both color and shape), rather than just the most salient ones.
 
-These mechanisms remain speculative and require further investigation. Future work could test whether other forms of regularization (dropout, weight decay) applied to visual-only training produce similar effects, which would support the regularization hypothesis.
+These mechanisms remain speculative and require further investigation. A critical test would be to apply alternative forms of regularization (dropout, weight decay, data augmentation) to visual-only training: if shape bias emerges, this would support the regularization hypothesis over alternatives requiring cross-modal interaction.
 
 ### 5.5 Limitations
 
@@ -316,6 +316,8 @@ We have demonstrated that brain-inspired learning rules—reconstruction-based p
 4. **Mechanistic requirements:** Reconstruction prevents representational collapse; ATL consolidation improves cross-modal binding by 41% (p=0.01, d=1.44).
 
 5. **Efficiency trade-off:** Backprop-autoencoder achieves 100% binding vs ~65% for brain-inspired learning, suggesting gradient optimization is more efficient, though brain-inspired approaches offer interpretability and biological plausibility.
+
+Critically, the language ablation study reveals an unexpected dependency: shape bias does not emerge from visual reconstruction alone, regardless of training duration. Language alignment provides necessary scaffolding, yet this scaffolding works independently of whether labels mention shapes. This suggests cross-modal learning may be essential for perceptual development in ways not previously appreciated.
 
 Brain-inspired learning achieves functional performance while *recapitulating known developmental phenomena*—a hallmark of biologically-relevant computational models. The emergent trajectory, confirmed not to be an artifact, and the critical role of cross-modal scaffolding provide computational support for theories linking multimodal learning to perceptual development.
 

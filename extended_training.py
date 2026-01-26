@@ -144,8 +144,8 @@ def measure_spatial_frequency_learning(brain) -> dict:
 # ============================================================
 
 N_SEEDS = 1
-N_EPOCHS = 10000
-MEASURE_EVERY = 20  # Measure metrics every N epochs
+N_EPOCHS = 100000
+MEASURE_EVERY = 1000  # Measure metrics every N epochs
 SAVE_DIR = Path("extended_training_results")
 SAVE_DIR.mkdir(exist_ok=True)
 
