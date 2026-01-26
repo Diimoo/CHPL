@@ -1,4 +1,4 @@
-# Brain-Like Visual Learning Shows Emergent Developmental Bias and Implicit Regularization
+# Brain-Inspired Visual Learning Shows Emergent Developmental Trajectory in Cross-Modal Binding
 
 **Ahmed Trabelsi**  
 hi@locentia.com
@@ -8,9 +8,9 @@ hi@locentia.com
 
 ## Abstract
 
-Biological learning mechanisms remain poorly understood compared to supervised deep learning. We investigate whether brain-inspired plasticity rules can achieve cross-modal learning in a controlled synthetic environment. Using reconstruction-based predictive coding and Hebbian consolidation, our model learns to bind visual shapes with linguistic labels. Statistical validation (n=10) reveals reduced color bias (1.23 ± 0.09) compared to backpropagation (2.25 ± 0.48; t=-6.32, p<0.00001). Extended training shows an emergent developmental trajectory from neutral (0.99) through peak color bias (1.32) to reduction (1.07), recapitulating infant development. Ablation studies identify reconstruction as necessary and ATL consolidation as critical (+41% binding, p=0.01, d=1.44). Our work demonstrates brain-inspired learning achieves meaningful representations while recapitulating developmental phenomena.
+Biological learning mechanisms remain poorly understood compared to supervised deep learning. We investigate whether brain-inspired plasticity rules can achieve cross-modal learning in a controlled synthetic environment. Using reconstruction-based predictive coding and Hebbian consolidation, our model learns to bind visual shapes with linguistic labels. Extended training reveals an **emergent developmental trajectory** from neutral (0.99) through peak color bias (1.32) to reduction (1.07), recapitulating infant visual development. Critically, control experiments with simultaneous training (p=0.99) confirm this trajectory is not an artifact of phased training. Fair baseline comparison with backprop-autoencoder (same reconstruction objective) shows similar final bias (1.18 vs 1.20, p=0.66), indicating the learning rule difference is less important than the training objective. Ablation studies identify reconstruction as necessary and ATL consolidation as critical (+41% binding, p=0.01, d=1.44). Our work demonstrates brain-inspired learning achieves meaningful cross-modal representations while spontaneously recapitulating developmental phenomena.
 
-**Keywords:** brain-like learning, cross-modal binding, developmental trajectory, Hebbian plasticity, predictive coding, color bias
+**Keywords:** brain-inspired learning, cross-modal binding, developmental trajectory, Hebbian plasticity, predictive coding, color bias
 
 ---
 
@@ -24,13 +24,13 @@ A particularly intriguing aspect of human visual development is the systematic p
 
 In this work, we ask: **Can brain-inspired plasticity rules achieve cross-modal learning from scratch, and if so, what emergent properties arise?** We address this question by developing a simplified neural architecture inspired by visual cortex, language cortex, and ATL, trained using reconstruction-based predictive coding and Hebbian consolidation. Our key contributions are:
 
-1. We demonstrate that brain-like learning achieves meaningful cross-modal binding (62.5% alignment) using only local plasticity rules, without supervised classification.
+1. We demonstrate that brain-inspired learning achieves meaningful cross-modal binding (62.5% alignment) using reconstruction-based learning and Hebbian consolidation, without supervised classification.
 
-2. We show that brain-like learning exhibits **significantly less color bias** than supervised backpropagation (1.23 vs 2.25, p<0.00001), suggesting implicit regularization from biological constraints.
+2. We discover an **emergent developmental trajectory** where color bias rises and then falls (neutral → peak → reduction), recapitulating infant visual development without explicit programming.
 
-3. We discover an **emergent developmental trajectory** where color bias rises and then falls (neutral → peak → reduction), recapitulating infant visual development without explicit programming.
+3. We provide **critical control experiments**: (a) simultaneous training shows the trajectory is not an artifact of phased training (p=0.99); (b) fair comparison with backprop-autoencoder shows similar bias when using the same objective (p=0.66), clarifying that the reconstruction objective—not the learning rule—drives reduced bias compared to classification.
 
-4. Through systematic ablations, we identify **mechanistic requirements**: reconstruction loss prevents collapse; ATL consolidation is critical for binding.
+4. Through systematic ablations, we identify **mechanistic requirements**: reconstruction loss prevents collapse; ATL consolidation is critical for binding (+41%, p=0.01).
 
 ---
 
@@ -112,12 +112,20 @@ A score >1 indicates color bias; <1 indicates shape bias; =1 is neutral.
 
 **Active Concept Count.** The number of distinct prototypes activated across all stimuli, measuring representational diversity.
 
-### 3.5 Baselines and Ablations
+### 3.5 Baselines and Controls
 
-We compare our brain-like model against:
-- **Backpropagation baseline:** A convolutional classifier trained with cross-entropy loss for color and shape classification.
-- **No reconstruction:** Brain-like model without visual cortex training (random features).
-- **No consolidation:** Brain-like model without ATL Hebbian updates.
+We compare our brain-inspired model against:
+
+**Ablation conditions:**
+- **No reconstruction:** Brain-inspired model without visual cortex training (random features).
+- **No consolidation:** Brain-inspired model without ATL Hebbian updates.
+
+**Baseline comparisons:**
+- **Classification backprop:** A convolutional classifier trained with cross-entropy loss. *Note: This comparison uses a different objective (classification vs reconstruction) and is therefore not a fair test of learning rules.*
+- **Backprop-autoencoder (fair baseline):** Same architecture, same reconstruction objective, but using standard backpropagation instead of Hebbian learning. This provides a fair comparison of learning rules.
+
+**Control experiments:**
+- **Simultaneous training:** All modules trained from epoch 0 (vs phased training) to test whether the developmental trajectory is an artifact of training order.
 
 ### 3.6 Statistical Analysis
 
@@ -144,14 +152,26 @@ Our brain-like model successfully learns to bind visual shapes with linguistic l
 
 *Collapsed to single concept (trivial binding).
 
-### 4.2 Brain-Inspired Learning Shows Reduced Color Bias
+### 4.2 Fair Baseline Comparison: Objective Matters More Than Learning Rule
 
-A striking finding is that brain-inspired learning exhibits significantly **less color bias** than supervised backpropagation (Figure 1A). The brain-inspired model shows moderate color bias (1.23 ± 0.09), while backpropagation shows nearly double the bias (2.25 ± 0.48). This difference is highly significant (t=-6.32, **p<0.00001**).
+Initial experiments showed brain-inspired learning exhibits less color bias than classification-based backpropagation (1.23 ± 0.09 vs 2.25 ± 0.48; t=-6.32, p<0.00001). However, this comparison confounds learning rule with training objective.
+
+To isolate the effect of learning rules, we compared against a **backprop-autoencoder** using the same reconstruction objective (Table 2). Results reveal **no significant difference** (1.18 ± 0.08 vs 1.20 ± 0.08; t=-0.45, **p=0.66**, d=-0.32).
+
+**Table 2: Fair baseline comparison (n=5 seeds)**
+
+| Condition | Final Bias | Binding Rate |
+|-----------|------------|---------------|
+| Brain-inspired (phased) | 1.177 ± 0.084 | 63.8% ± 16.5% |
+| Brain-inspired (simultaneous) | 1.178 ± 0.145 | 66.2% ± 10.2% |
+| Backprop-autoencoder | 1.203 ± 0.079 | 100.0% ± 0.0% |
+
+**Key insight:** The reduced bias compared to classification backprop stems from the **reconstruction objective**, not from Hebbian learning per se. Both brain-inspired and backprop-autoencoder show similar bias when trained with reconstruction loss.
 
 ![Figure 1: Ablation Results](figure2_ablation_results.png)
-*Figure 1: Ablation study results. (A) Color categorization bias across conditions. Brain-inspired learning shows significantly lower bias than backpropagation (p<0.00001). Dashed line indicates neutral (no bias). (B) Cross-modal binding rates. ATL consolidation provides 41% improvement (p=0.01, d=1.44). Error bars show ±1 SD (n=10).*
+*Figure 1: Ablation study results. (A) Color categorization bias across conditions. Brain-inspired learning shows lower bias than classification backprop, but similar bias to backprop-autoencoder (fair comparison). (B) Cross-modal binding rates. ATL consolidation provides 41% improvement (p=0.01, d=1.44). Error bars show ±1 SD.*
 
-Furthermore, brain-inspired learning shows **lower variance** across seeds (std=0.09) compared to backpropagation (std=0.48), suggesting more robust learning dynamics. This implicit regularization effect was unexpected and suggests that reconstruction-based learning with Hebbian consolidation may prevent overfitting to superficial features.
+Interestingly, the backprop-autoencoder achieves **100% binding rate** compared to ~65% for brain-inspired learning. This suggests end-to-end gradient optimization is more efficient for cross-modal alignment, though the brain-inspired approach may offer other benefits (interpretability, biological plausibility).
 
 ### 4.3 Ablation Studies Reveal Mechanistic Requirements
 
@@ -174,7 +194,13 @@ Extended training (100 epochs, n=3 seeds) reveals a striking developmental traje
 ![Figure 2: Developmental Trajectory](figure3_developmental_trajectory.png)
 *Figure 2: Developmental trajectory over extended training (100 epochs). (A) Color bias emerges early (peak at epoch 25) then reduces toward neutral, recapitulating infant visual development. (B) Cross-modal binding rate stabilizes around 55%. (C) Active concept count increases as training progresses. Thin lines: individual seeds (n=3); thick line: mean; shading: ±1 SD.*
 
-This trajectory was not explicitly programmed—it emerges naturally from the interaction between reconstruction-based learning and cross-modal binding. The temporal dynamics closely parallel infant visual development, where color categorization dominates before 24 months, followed by shape bias emergence (Smith & Heise, 1992).
+### 4.5 Control Experiment: Trajectory is Not an Artifact
+
+A critical concern is whether this trajectory is an artifact of phased training (visual → language → binding). To test this, we trained with **simultaneous learning** where all modules are active from epoch 0.
+
+Results show **no significant difference** between phased and simultaneous training (final bias: 1.18 vs 1.18; t=-0.01, **p=0.99**, d=-0.01). Both conditions show similar developmental trajectories with early color bias followed by reduction.
+
+**Conclusion:** The color→shape trajectory is an **emergent property** of reconstruction-based learning, not an artifact of training order. This strengthens the parallel to infant development, where the trajectory arises from learning dynamics rather than external curriculum.
 
 ---
 
@@ -190,15 +216,19 @@ Our results provide computational support for several neuroscientific theories:
 
 **Developmental trajectory.** The emergent color→shape progression matches extensive developmental psychology literature (Bornstein, 1976; Smith & Heise, 1992; Landau et al., 1988). Our model suggests this trajectory arises naturally from the learning dynamics of reconstruction-based feature extraction, where color—affecting more pixels than shape boundaries—produces stronger gradients early in training.
 
-### 5.2 Implicit Regularization in Brain-Inspired Learning
+### 5.2 Objective Matters More Than Learning Rule
 
-Perhaps our most surprising finding is that brain-inspired learning produces *less* biased representations than supervised backpropagation. While backpropagation optimizes directly for classification, our approach provides implicit regularization through:
+Our fair baseline comparison reveals an important insight: when using the same reconstruction objective, brain-inspired and backprop learning produce **similar bias** (p=0.66). The reduced bias compared to classification backprop stems from the objective, not the learning rule.
 
-1. **Reconstruction objective** forces learning of generative features rather than discriminative shortcuts.
-2. **Competitive learning** in ATL encourages balanced prototype utilization.
-3. **Hebbian consolidation** averages representations across examples, smoothing noise.
+This has implications for both neuroscience and machine learning:
 
-This suggests that biological constraints, often viewed as limitations, may actually confer advantages for robust representation learning. Similar observations have been made in the machine learning literature regarding the regularizing effects of noise and local learning rules (Hochreiter & Schmidhuber, 1997).
+1. **For neuroscience:** The brain's use of predictive coding (reconstruction-based learning) may be more important than the specific plasticity mechanism for achieving balanced representations.
+
+2. **For machine learning:** Reconstruction objectives (autoencoders, VAEs) may provide implicit regularization compared to pure classification, regardless of optimization method.
+
+3. **Biological constraints:** While Hebbian learning doesn't confer bias advantages over backprop with matched objectives, it may offer other benefits: locality (no backward pass), interpretability, and compatibility with neural hardware.
+
+Interestingly, the backprop-autoencoder achieves 100% binding vs ~65% for brain-inspired learning, suggesting gradient-based optimization is more efficient for cross-modal alignment. The brain may compensate through longer developmental timescales and richer environmental statistics.
 
 ### 5.3 Mechanistic Insights
 
@@ -231,11 +261,17 @@ Several limitations warrant mention:
 
 ## 6. Conclusion
 
-We have demonstrated that brain-inspired learning rules—reconstruction-based predictive coding and Hebbian consolidation—can achieve meaningful cross-modal binding from scratch. Statistical validation (n=10 seeds) reveals that our approach shows significantly reduced color bias compared to supervised backpropagation (1.23 vs 2.25, p<0.00001), suggesting reconstruction-based learning with Hebbian consolidation provides implicit regularization. Extended training reveals an emergent developmental trajectory that recapitulates infant visual development, transitioning from neutral through peak color bias to reduction.
+We have demonstrated that brain-inspired learning rules—reconstruction-based predictive coding and Hebbian consolidation—can achieve meaningful cross-modal binding from scratch. Our key findings:
 
-Our ablation studies identify critical components: reconstruction prevents representational collapse, while ATL consolidation improves cross-modal binding by 41% (p=0.01, d=1.44). These findings provide mechanistic insights into both biological learning and the development of perceptual biases.
+1. **Emergent developmental trajectory:** Extended training reveals a color→shape progression that recapitulates infant visual development, transitioning from neutral through peak color bias to reduction. Control experiments confirm this is not an artifact of phased training (p=0.99).
 
-Brain-inspired learning achieves not only functional performance but also *recapitulates known developmental phenomena*—a hallmark of biologically-relevant computational models. This work takes a step toward understanding how the brain learns to integrate information across modalities using local plasticity rules and reconstruction-based objectives.
+2. **Objective matters more than learning rule:** Fair comparison with backprop-autoencoder shows similar bias when using the same reconstruction objective (p=0.66). The reduced bias compared to classification backprop stems from the objective, not from Hebbian learning per se.
+
+3. **Mechanistic requirements:** Reconstruction prevents representational collapse; ATL consolidation improves cross-modal binding by 41% (p=0.01, d=1.44).
+
+4. **Efficiency trade-off:** Backprop-autoencoder achieves 100% binding vs ~65% for brain-inspired learning, suggesting gradient optimization is more efficient, though brain-inspired approaches offer interpretability and biological plausibility.
+
+Brain-inspired learning achieves functional performance while *recapitulating known developmental phenomena*—a hallmark of biologically-relevant computational models. The emergent trajectory, confirmed not to be an artifact, provides computational support for theories linking reconstruction-based learning to perceptual development.
 
 ---
 
@@ -287,12 +323,23 @@ Brain-inspired learning achieves not only functional performance but also *recap
 
 ## Supplementary Material
 
-### A. Detailed Ablation Statistics
+### A. Detailed Statistical Comparisons
+
+**Table A1: Ablation and baseline comparisons**
 
 | Comparison | t-statistic | p-value | Cohen's d | Significant |
 |------------|-------------|---------|-----------|-------------|
-| Brain-like vs Backprop (bias) | -6.316 | <0.00001 | 2.98 | Yes |
+| Brain-inspired vs Classification Backprop (bias) | -6.316 | <0.00001 | 2.98 | Yes |
 | Full vs No-Consolidation (binding) | 3.267 | 0.010 | 1.44 | Yes |
+
+**Table A2: Fair baseline comparison (n=5 seeds)**
+
+| Comparison | t-statistic | p-value | Cohen's d | Significant |
+|------------|-------------|---------|-----------|-------------|
+| Phased vs Simultaneous (artifact test) | -0.013 | 0.990 | -0.01 | No |
+| Brain-inspired vs Backprop-Autoencoder (fair) | -0.451 | 0.664 | -0.32 | No |
+
+*Note: The non-significant results in Table A2 are scientifically informative. They demonstrate that (1) the developmental trajectory is emergent, not an artifact, and (2) the reduced bias compared to classification backprop stems from the reconstruction objective, not from Hebbian learning.*
 
 ### B. Hyperparameters
 

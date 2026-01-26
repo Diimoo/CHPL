@@ -1,0 +1,15 @@
+[
+  {
+    "epoch": 0,
+    "color_change_loss": 0.22874347746372223,
+    "shape_change_loss": 0.22901739180088043,
+    "loss_ratio": 0.9988039147461975,
+    "low_freq_error": 0.18228176280856132,
+    "high_freq_error": 0.015663152262568474,
+    "freq_ratio": 11.637609299635155,
+    "feature_similarity_within_color": 0.9790275196234385,
+    "feature_similarity_within_shape": 0.9709846079349518,
+    "clustering_bias": 0.008042911688486698,
+    "total_gradient_magnitude": 0.0
+  }
+]

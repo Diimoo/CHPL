@@ -89,13 +89,15 @@ def generate_figure3(trajectories: list):
     
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.5))
     
-    colors_seeds = ['#3498db', '#e74c3c', '#2ecc71']
+    # Generate colors dynamically for any number of seeds
+    n_seeds = len(trajectories)
+    cmap = plt.cm.tab10 if n_seeds <= 10 else plt.cm.tab20
+    colors_seeds = [cmap(i / max(n_seeds, 1)) for i in range(n_seeds)]
     
     # Panel A: Bias over time
     for i, traj in enumerate(trajectories):
         axes[0].plot(traj['epochs'], traj['bias_scores'], 
-                     color=colors_seeds[i], alpha=0.5, linewidth=2, 
-                     label=f'Seed {i+1}')
+                     color=colors_seeds[i], alpha=0.4, linewidth=1.5)
     
     # Mean trajectory
     epochs = trajectories[0]['epochs']
