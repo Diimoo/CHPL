@@ -20,6 +20,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from typing import Dict, List, Tuple, Optional
+from enum import Enum
 from collections import defaultdict
 from dataclasses import dataclass
 
@@ -138,6 +139,8 @@ class SimpleVisualCortex(nn.Module):
         if features.dim() == 1:
             features = features.unsqueeze(0)
         reconstructed = self.reconstruct(features)
+        if reconstructed.dim() == 3:
+            reconstructed = reconstructed.unsqueeze(0)
         
         return F.mse_loss(reconstructed, image)
 
@@ -425,6 +428,111 @@ class ATL(nn.Module):
         return int((self.usage > 0).sum().item())
 
 
+class ATLVariant(str, Enum):
+    BASELINE = 'baseline'
+    MINIMAL = 'minimal'
+    EXPERIMENTAL = 'experimental'
+
+
+class ATLMinimal(ATL):
+    def __init__(
+        self,
+        feature_dim: int = 64,
+        n_concepts: int = 100,
+        trace_decay: float = 0.99,
+        usage_winner_penalty: float = 0.01,
+        unused_bonus: float = 0.5,
+    ):
+        super().__init__(feature_dim=feature_dim, n_concepts=n_concepts)
+        self.register_buffer('prototype_traces', torch.zeros(n_concepts, feature_dim, device=DEVICE))
+        self.trace_decay = float(trace_decay)
+        self.usage_winner_penalty = float(usage_winner_penalty)
+        self.unused_bonus = float(unused_bonus)
+
+    def consolidate(self, vis_features: torch.Tensor, lang_features: torch.Tensor):
+        vis_features = vis_features.flatten()
+        lang_features = lang_features.flatten()
+
+        vis_proj = self.vis_proj(vis_features)
+        lang_proj = self.lang_proj(lang_features)
+
+        vis_proj = torch.clamp(vis_proj, -1.0, 1.0)
+        lang_proj = torch.clamp(lang_proj, -1.0, 1.0)
+
+        vis_proj = F.normalize(vis_proj, dim=-1)
+        lang_proj = F.normalize(lang_proj, dim=-1)
+
+        combined = F.normalize((vis_proj + lang_proj) / 2, dim=-1)
+        similarities = torch.matmul(self.prototypes, combined)
+        # Encourage allocation of under-used prototypes (prevents collapse)
+        unused = (self.usage == 0).float()
+        adjusted = similarities - self.usage_winner_penalty * self.usage + self.unused_bonus * unused
+        winner = adjusted.argmax().item()
+
+        self.prototype_traces[winner] = (
+            self.trace_decay * self.prototype_traces[winner] + (1.0 - self.trace_decay) * combined
+        )
+
+        lr = self.base_lr / (1 + self.usage[winner] * 0.01)
+        self.prototypes[winner] = F.normalize(
+            (1 - lr) * self.prototypes[winner] + lr * self.prototype_traces[winner],
+            dim=-1
+        )
+        self.usage[winner] += 1
+
+
+class ATLExperimental(ATLMinimal):
+    def __init__(
+        self,
+        feature_dim: int = 64,
+        n_concepts: int = 100,
+        trace_decay: float = 0.99,
+        usage_winner_penalty: float = 0.01,
+        use_weight_penalty: bool = True,
+    ):
+        super().__init__(
+            feature_dim=feature_dim,
+            n_concepts=n_concepts,
+            trace_decay=trace_decay,
+            usage_winner_penalty=usage_winner_penalty,
+        )
+        self.use_weight_penalty = bool(use_weight_penalty)
+
+    def consolidate(self, vis_features: torch.Tensor, lang_features: torch.Tensor):
+        vis_features = vis_features.flatten()
+        lang_features = lang_features.flatten()
+
+        vis_proj = self.vis_proj(vis_features)
+        lang_proj = self.lang_proj(lang_features)
+
+        vis_proj = torch.clamp(vis_proj, -1.0, 1.0)
+        lang_proj = torch.clamp(lang_proj, -1.0, 1.0)
+
+        vis_proj = F.normalize(vis_proj, dim=-1)
+        lang_proj = F.normalize(lang_proj, dim=-1)
+
+        combined = F.normalize((vis_proj + lang_proj) / 2, dim=-1)
+        similarities = torch.matmul(self.prototypes, combined)
+        unused = (self.usage == 0).float()
+        adjusted = similarities - self.usage_winner_penalty * self.usage + self.unused_bonus * unused
+        winner = adjusted.argmax().item()
+
+        self.prototype_traces[winner] = (
+            self.trace_decay * self.prototype_traces[winner] + (1.0 - self.trace_decay) * combined
+        )
+
+        lr = self.base_lr / (1 + self.usage[winner] * 0.01)
+        if self.use_weight_penalty:
+            weight_magnitude = self.prototypes[winner].abs().mean()
+            lr = lr * (1.0 / (1.0 + weight_magnitude))
+
+        self.prototypes[winner] = F.normalize(
+            (1 - lr) * self.prototypes[winner] + lr * self.prototype_traces[winner],
+            dim=-1
+        )
+        self.usage[winner] += 1
+
+
 # ============================================================
 # BRAIN-LIKE CROSS-MODAL LEARNER
 # ============================================================
@@ -442,7 +550,12 @@ class BrainCrossModalLearner:
     Learning is ONLINE during inference (like a real brain).
     """
     
-    def __init__(self, feature_dim: int = 64, n_concepts: int = 100):
+    def __init__(
+        self,
+        feature_dim: int = 64,
+        n_concepts: int = 100,
+        atl_variant: ATLVariant = ATLVariant.BASELINE,
+    ):
         self.feature_dim = feature_dim
         
         # Sensory cortices
@@ -451,7 +564,12 @@ class BrainCrossModalLearner:
         
         # Memory systems
         self.hippocampus = Hippocampus(feature_dim)
-        self.atl = ATL(feature_dim, n_concepts)
+        if atl_variant == ATLVariant.MINIMAL:
+            self.atl = ATLMinimal(feature_dim, n_concepts)
+        elif atl_variant == ATLVariant.EXPERIMENTAL:
+            self.atl = ATLExperimental(feature_dim, n_concepts)
+        else:
+            self.atl = ATL(feature_dim, n_concepts)
         
         # Hebbian learning parameters
         self.hebbian_lr = 0.01

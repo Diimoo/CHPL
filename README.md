@@ -18,7 +18,7 @@ We investigate whether brain-inspired plasticity rules can achieve cross-modal l
 ## Installation
 
 ```bash
-pip install torch numpy matplotlib scipy
+pip install -r requirements.txt
 ```
 
 Requires Python 3.8+ and PyTorch 2.0+ (CUDA recommended for faster validation).
@@ -29,17 +29,20 @@ The model requires three-phase training (visual reconstruction → language alig
 
 ```python
 from brain_crossmodal_learner import BrainCrossModalLearner
-from synthetic_environment import create_stimulus, SHAPES, COLORS
+from synthetic_environment import create_stimulus
+from brain_crossmodal_learner import DEVICE
 import torch
 
 # Create model
-model = BrainCrossModalLearner(visual_dim=64, language_dim=64, n_concepts=100).to('cuda')
+model = BrainCrossModalLearner(feature_dim=64, n_concepts=100)
 
 # Example inference (after training)
 img = create_stimulus(shape='circle', color='red', size='medium')
-visual_features = model.visual_cortex.encode(torch.tensor(img).unsqueeze(0).to('cuda'))
-atl_activation = model.atl.forward(visual_features)
-print(f"ATL concept: {atl_activation.argmax().item()}")
+img_t = torch.tensor(img, dtype=torch.float32).to(DEVICE)
+with torch.no_grad():
+    vis_features = model.visual(img_t)
+    _, concept_idx = model.atl.activate(vis_features, 'visual')
+print(f"ATL concept: {concept_idx}")
 
 # For full training pipeline, see validation_study.py
 ```
@@ -71,8 +74,10 @@ python extended_training.py     # Creates results/extended_training_results/
 python generate_figures.py
 ```
 Generates publication-quality figures:
-- `figure2_ablation_results.png` (and .pdf)
-- `figure3_developmental_trajectory.png` (and .pdf)
+- Paper figures (in `paper/`):
+  - `figure1_ablation_results.pdf`
+  - `figure2_developmental_trajectory.pdf`
+  - `figure3_language_ablation.pdf`
 
 ## Project Structure
 

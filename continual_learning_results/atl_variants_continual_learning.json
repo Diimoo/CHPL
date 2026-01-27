@@ -1,0 +1,357 @@
+{
+  "config": {
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "variants": [
+      "baseline",
+      "minimal",
+      "experimental"
+    ],
+    "pretrain_epochs": 15,
+    "task_epochs": 50,
+    "n_per_combo_pretrain": 10,
+    "n_per_combo_task": 20
+  },
+  "summary": {
+    "baseline": {
+      "mean_forgetting": 0.0,
+      "std_forgetting": 0.0
+    },
+    "minimal": {
+      "mean_forgetting": -0.03294187835262886,
+      "std_forgetting": 0.031882292416516925
+    },
+    "experimental": {
+      "mean_forgetting": 0.005552857374129844,
+      "std_forgetting": 0.035640181314901806
+    }
+  },
+  "results": {
+    "baseline": [
+      {
+        "seed": 1,
+        "atl_variant": "baseline",
+        "task0_after_task0": 0.25,
+        "task0_after_task2": 0.25,
+        "forgetting": 0.0,
+        "history": {
+          "after_task_0": [
+            0.25
+          ],
+          "after_task_1": [
+            0.25,
+            0.25
+          ],
+          "after_task_2": [
+            0.25,
+            0.25,
+            0.25
+          ]
+        }
+      },
+      {
+        "seed": 2,
+        "atl_variant": "baseline",
+        "task0_after_task0": 0.25,
+        "task0_after_task2": 0.25,
+        "forgetting": 0.0,
+        "history": {
+          "after_task_0": [
+            0.25
+          ],
+          "after_task_1": [
+            0.25,
+            0.25
+          ],
+          "after_task_2": [
+            0.25,
+            0.25,
+            0.25
+          ]
+        }
+      },
+      {
+        "seed": 3,
+        "atl_variant": "baseline",
+        "task0_after_task0": 0.25,
+        "task0_after_task2": 0.25,
+        "forgetting": 0.0,
+        "history": {
+          "after_task_0": [
+            0.25
+          ],
+          "after_task_1": [
+            0.25,
+            0.25
+          ],
+          "after_task_2": [
+            0.25,
+            0.25,
+            0.25
+          ]
+        }
+      },
+      {
+        "seed": 4,
+        "atl_variant": "baseline",
+        "task0_after_task0": 0.25,
+        "task0_after_task2": 0.25,
+        "forgetting": 0.0,
+        "history": {
+          "after_task_0": [
+            0.25
+          ],
+          "after_task_1": [
+            0.25,
+            0.25
+          ],
+          "after_task_2": [
+            0.25,
+            0.25,
+            0.25
+          ]
+        }
+      },
+      {
+        "seed": 5,
+        "atl_variant": "baseline",
+        "task0_after_task0": 0.25,
+        "task0_after_task2": 0.25,
+        "forgetting": 0.0,
+        "history": {
+          "after_task_0": [
+            0.25
+          ],
+          "after_task_1": [
+            0.25,
+            0.25
+          ],
+          "after_task_2": [
+            0.25,
+            0.25,
+            0.25
+          ]
+        }
+      }
+    ],
+    "minimal": [
+      {
+        "seed": 1,
+        "atl_variant": "minimal",
+        "task0_after_task0": 0.3125,
+        "task0_after_task2": 0.39215686274509803,
+        "forgetting": -0.07965686274509803,
+        "history": {
+          "after_task_0": [
+            0.3125
+          ],
+          "after_task_1": [
+            0.3333333333333333,
+            0.55
+          ],
+          "after_task_2": [
+            0.39215686274509803,
+            0.5409836065573771,
+            0.425
+          ]
+        }
+      },
+      {
+        "seed": 2,
+        "atl_variant": "minimal",
+        "task0_after_task0": 0.4875,
+        "task0_after_task2": 0.5,
+        "forgetting": -0.012500000000000011,
+        "history": {
+          "after_task_0": [
+            0.4875
+          ],
+          "after_task_1": [
+            0.475,
+            0.3375
+          ],
+          "after_task_2": [
+            0.5,
+            0.3625,
+            0.3625
+          ]
+        }
+      },
+      {
+        "seed": 3,
+        "atl_variant": "minimal",
+        "task0_after_task0": 0.25,
+        "task0_after_task2": 0.2413793103448276,
+        "forgetting": 0.008620689655172403,
+        "history": {
+          "after_task_0": [
+            0.25
+          ],
+          "after_task_1": [
+            0.25,
+            0.2625
+          ],
+          "after_task_2": [
+            0.2413793103448276,
+            0.234375,
+            0.25
+          ]
+        }
+      },
+      {
+        "seed": 4,
+        "atl_variant": "minimal",
+        "task0_after_task0": 0.25,
+        "task0_after_task2": 0.2727272727272727,
+        "forgetting": -0.022727272727272707,
+        "history": {
+          "after_task_0": [
+            0.25
+          ],
+          "after_task_1": [
+            0.26229508196721313,
+            0.4375
+          ],
+          "after_task_2": [
+            0.2727272727272727,
+            0.4155844155844156,
+            0.3625
+          ]
+        }
+      },
+      {
+        "seed": 5,
+        "atl_variant": "minimal",
+        "task0_after_task0": 0.3875,
+        "task0_after_task2": 0.44594594594594594,
+        "forgetting": -0.05844594594594593,
+        "history": {
+          "after_task_0": [
+            0.3875
+          ],
+          "after_task_1": [
+            0.4473684210526316,
+            0.35
+          ],
+          "after_task_2": [
+            0.44594594594594594,
+            0.3064516129032258,
+            0.4
+          ]
+        }
+      }
+    ],
+    "experimental": [
+      {
+        "seed": 1,
+        "atl_variant": "experimental",
+        "task0_after_task0": 0.25,
+        "task0_after_task2": 0.18333333333333332,
+        "forgetting": 0.06666666666666668,
+        "history": {
+          "after_task_0": [
+            0.25
+          ],
+          "after_task_1": [
+            0.26666666666666666,
+            0.5125
+          ],
+          "after_task_2": [
+            0.18333333333333332,
+            0.5211267605633803,
+            0.4125
+          ]
+        }
+      },
+      {
+        "seed": 2,
+        "atl_variant": "experimental",
+        "task0_after_task0": 0.4875,
+        "task0_after_task2": 0.475,
+        "forgetting": 0.012500000000000011,
+        "history": {
+          "after_task_0": [
+            0.4875
+          ],
+          "after_task_1": [
+            0.4875,
+            0.275
+          ],
+          "after_task_2": [
+            0.475,
+            0.30985915492957744,
+            0.3125
+          ]
+        }
+      },
+      {
+        "seed": 3,
+        "atl_variant": "experimental",
+        "task0_after_task0": 0.25,
+        "task0_after_task2": 0.25,
+        "forgetting": 0.0,
+        "history": {
+          "after_task_0": [
+            0.25
+          ],
+          "after_task_1": [
+            0.25,
+            0.2625
+          ],
+          "after_task_2": [
+            0.25,
+            0.2535211267605634,
+            0.25
+          ]
+        }
+      },
+      {
+        "seed": 4,
+        "atl_variant": "experimental",
+        "task0_after_task0": 0.25,
+        "task0_after_task2": 0.25862068965517243,
+        "forgetting": -0.008620689655172431,
+        "history": {
+          "after_task_0": [
+            0.25
+          ],
+          "after_task_1": [
+            0.25,
+            0.3875
+          ],
+          "after_task_2": [
+            0.25862068965517243,
+            0.3783783783783784,
+            0.4125
+          ]
+        }
+      },
+      {
+        "seed": 5,
+        "atl_variant": "experimental",
+        "task0_after_task0": 0.3375,
+        "task0_after_task2": 0.38028169014084506,
+        "forgetting": -0.04278169014084504,
+        "history": {
+          "after_task_0": [
+            0.3375
+          ],
+          "after_task_1": [
+            0.3,
+            0.3375
+          ],
+          "after_task_2": [
+            0.38028169014084506,
+            0.32432432432432434,
+            0.3875
+          ]
+        }
+      }
+    ]
+  }
+}
