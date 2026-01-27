@@ -12,6 +12,7 @@ The question: Can biological learning rules learn cross-modal binding from scrat
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass
 import math
@@ -44,26 +45,29 @@ SIZE_PARAMS = {
 
 def draw_circle(img: np.ndarray, cx: int, cy: int, r: int, color: Tuple[int, int, int]):
     """Draw filled circle."""
-    for y in range(max(0, cy-r), min(28, cy+r+1)):
-        for x in range(max(0, cx-r), min(28, cx+r+1)):
+    h, w = img.shape[0], img.shape[1]
+    for y in range(max(0, cy-r), min(h, cy+r+1)):
+        for x in range(max(0, cx-r), min(w, cx+r+1)):
             if (x - cx)**2 + (y - cy)**2 <= r**2:
                 img[y, x] = color
 
 
 def draw_square(img: np.ndarray, cx: int, cy: int, r: int, color: Tuple[int, int, int]):
     """Draw filled square."""
-    for y in range(max(0, cy-r), min(28, cy+r+1)):
-        for x in range(max(0, cx-r), min(28, cx+r+1)):
+    h, w = img.shape[0], img.shape[1]
+    for y in range(max(0, cy-r), min(h, cy+r+1)):
+        for x in range(max(0, cx-r), min(w, cx+r+1)):
             img[y, x] = color
 
 
 def draw_triangle(img: np.ndarray, cx: int, cy: int, r: int, color: Tuple[int, int, int]):
     """Draw filled triangle (pointing up)."""
-    for y in range(max(0, cy-r), min(28, cy+r+1)):
+    h, w = img.shape[0], img.shape[1]
+    for y in range(max(0, cy-r), min(h, cy+r+1)):
         # Width at this height
         progress = (cy + r - y) / (2 * r) if r > 0 else 0
         half_width = int(r * progress)
-        for x in range(max(0, cx-half_width), min(28, cx+half_width+1)):
+        for x in range(max(0, cx-half_width), min(w, cx+half_width+1)):
             img[y, x] = color
 
 
@@ -73,8 +77,9 @@ def draw_star(img: np.ndarray, cx: int, cy: int, r: int, color: Tuple[int, int, 
     r_outer = r
     r_inner = r // 2
     
-    for y in range(max(0, cy-r), min(28, cy+r+1)):
-        for x in range(max(0, cx-r), min(28, cx+r+1)):
+    h, w = img.shape[0], img.shape[1]
+    for y in range(max(0, cy-r), min(h, cy+r+1)):
+        for x in range(max(0, cx-r), min(w, cx+r+1)):
             # Convert to polar
             dx, dy = x - cx, y - cy
             dist = math.sqrt(dx**2 + dy**2)
@@ -95,19 +100,21 @@ def draw_cross(img: np.ndarray, cx: int, cy: int, r: int, color: Tuple[int, int,
     """Draw plus/cross shape."""
     thickness = max(2, r // 3)
     # Horizontal bar
-    for y in range(max(0, cy-thickness//2), min(28, cy+thickness//2+1)):
-        for x in range(max(0, cx-r), min(28, cx+r+1)):
+    h, w = img.shape[0], img.shape[1]
+    for y in range(max(0, cy-thickness//2), min(h, cy+thickness//2+1)):
+        for x in range(max(0, cx-r), min(w, cx+r+1)):
             img[y, x] = color
     # Vertical bar
-    for y in range(max(0, cy-r), min(28, cy+r+1)):
-        for x in range(max(0, cx-thickness//2), min(28, cx+thickness//2+1)):
+    for y in range(max(0, cy-r), min(h, cy+r+1)):
+        for x in range(max(0, cx-thickness//2), min(w, cx+thickness//2+1)):
             img[y, x] = color
 
 
 def draw_diamond(img: np.ndarray, cx: int, cy: int, r: int, color: Tuple[int, int, int]):
     """Draw diamond (rotated square)."""
-    for y in range(max(0, cy-r), min(28, cy+r+1)):
-        for x in range(max(0, cx-r), min(28, cx+r+1)):
+    h, w = img.shape[0], img.shape[1]
+    for y in range(max(0, cy-r), min(h, cy+r+1)):
+        for x in range(max(0, cx-r), min(w, cx+r+1)):
             if abs(x - cx) + abs(y - cy) <= r:
                 img[y, x] = color
 
@@ -165,6 +172,66 @@ def create_stimulus(shape: str, color: str, size: str,
     return img_float
 
 
+def _scaled_radius(size: str, canvas_size: int) -> int:
+    base = SIZE_PARAMS[size]
+    return max(1, int(round(base * (canvas_size / 28.0))))
+
+
+def create_stimulus_on_canvas(
+    shape: str,
+    color: str,
+    size: str,
+    canvas_size: int,
+    center: Tuple[int, int],
+    noise: float = 0.0,
+) -> np.ndarray:
+    """Create an RGB canvas with a single shape drawn at an explicit center."""
+    img = np.zeros((canvas_size, canvas_size, 3), dtype=np.uint8)
+
+    cx, cy = int(center[0]), int(center[1])
+    r = _scaled_radius(size, canvas_size)
+    rgb = COLOR_RGB[color]
+    draw_fn = DRAW_FUNCTIONS[shape]
+    draw_fn(img, cx, cy, r, rgb)
+
+    img_float = img.astype(np.float32) / 255.0
+    if noise > 0:
+        img_float += np.random.randn(canvas_size, canvas_size, 3).astype(np.float32) * noise
+        img_float = np.clip(img_float, 0, 1)
+
+    return img_float
+
+
+def get_spatial_relation(
+    center1: Tuple[int, int],
+    center2: Tuple[int, int],
+    next_to_threshold: int = 12,
+) -> str:
+    """Infer a coarse spatial relation between object 1 and object 2."""
+    x1, y1 = center1
+    x2, y2 = center2
+    dx = x2 - x1
+    dy = y2 - y1
+
+    if abs(dx) <= next_to_threshold and abs(dy) <= next_to_threshold:
+        return 'next_to'
+
+    if abs(dy) >= abs(dx):
+        return 'above' if y1 < y2 else 'below'
+    return 'left_of' if x1 < x2 else 'right_of'
+
+
+def downsample_scene(scene: np.ndarray, out_size: int = 28) -> np.ndarray:
+    """Downsample a scene (e.g., 56x56x3) to out_size x out_size x 3."""
+    if scene.ndim != 3 or scene.shape[-1] != 3:
+        raise ValueError(f"Expected scene [H, W, 3], got {tuple(scene.shape)}")
+
+    x = torch.from_numpy(scene).permute(2, 0, 1).unsqueeze(0).float()  # [1, 3, H, W]
+    x = F.interpolate(x, size=(out_size, out_size), mode='bilinear', align_corners=False)
+    y = x.squeeze(0).permute(1, 2, 0).cpu().numpy()
+    return y.astype(np.float32)
+
+
 # ============================================================
 # VOCABULARY: 50 words for synthetic domain
 # ============================================================
@@ -183,7 +250,8 @@ VOCABULARY = (
     # Descriptors (10)
     ['round', 'angular', 'pointed', 'flat', 'thick', 'thin', 'big', 'tiny', 'same', 'different'] +
     # Actions (for future) (10)
-    ['see', 'look', 'find', 'point', 'show', 'name', 'describe', 'match', 'compare', 'identify']
+    ['see', 'look', 'find', 'point', 'show', 'name', 'describe', 'match', 'compare', 'identify'] +
+    ['above', 'below', 'left_of', 'right_of', 'next_to']
 )
 
 # Map words to indices
@@ -326,6 +394,126 @@ def generate_test_pairs(include_unseen_combinations: bool = True) -> Dict[str, L
             ))
     
     return tests
+
+
+@dataclass
+class TwoObjectPair:
+    """A two-object relational training example."""
+    image: np.ndarray
+    label: str
+    relation: str
+    obj1: Dict[str, object]
+    obj2: Dict[str, object]
+
+    def to_tensor(self) -> Tuple[torch.Tensor, str]:
+        img_t = torch.from_numpy(self.image).float()
+        return img_t, self.label
+
+
+def create_two_object_scene(
+    obj1: Dict[str, object],
+    obj2: Dict[str, object],
+    canvas_size: int = 56,
+    noise: float = 0.0,
+) -> Tuple[np.ndarray, str, str]:
+    """Create a 56x56 (default) scene with two objects and an inferred relation."""
+    img = np.zeros((canvas_size, canvas_size, 3), dtype=np.float32)
+
+    img1 = create_stimulus_on_canvas(
+        shape=str(obj1['shape']),
+        color=str(obj1['color']),
+        size=str(obj1.get('size', 'small')),
+        canvas_size=canvas_size,
+        center=tuple(obj1['center']),
+        noise=0.0,
+    )
+    img2 = create_stimulus_on_canvas(
+        shape=str(obj2['shape']),
+        color=str(obj2['color']),
+        size=str(obj2.get('size', 'small')),
+        canvas_size=canvas_size,
+        center=tuple(obj2['center']),
+        noise=0.0,
+    )
+
+    img = np.clip(img1 + img2, 0.0, 1.0)
+    if noise > 0:
+        img += np.random.randn(canvas_size, canvas_size, 3).astype(np.float32) * noise
+        img = np.clip(img, 0.0, 1.0)
+
+    relation = get_spatial_relation(tuple(obj1['center']), tuple(obj2['center']))
+    label = f"{obj1['color']} {obj1['shape']} {relation} {obj2['color']} {obj2['shape']}"
+    return img.astype(np.float32), label, relation
+
+
+def generate_two_object_pairs(
+    colors: List[str],
+    shapes: List[str],
+    relations: List[str],
+    n_per_combination: int = 10,
+    canvas_size: int = 56,
+    noise_range: Tuple[float, float] = (0.0, 0.05),
+) -> List[TwoObjectPair]:
+    """Generate a small relational dataset: (obj1, relation, obj2) on a 56x56 canvas."""
+    pairs: List[TwoObjectPair] = []
+
+    margin = int(round(canvas_size * 0.25))
+    c_low = margin
+    c_high = canvas_size - margin
+
+    centers_for_relation = {
+        'above': ((canvas_size // 2, c_low), (canvas_size // 2, c_high)),
+        'below': ((canvas_size // 2, c_high), (canvas_size // 2, c_low)),
+        'left_of': ((c_low, canvas_size // 2), (c_high, canvas_size // 2)),
+        'right_of': ((c_high, canvas_size // 2), (c_low, canvas_size // 2)),
+        'next_to': ((canvas_size // 2 - margin // 2, canvas_size // 2), (canvas_size // 2 + margin // 2, canvas_size // 2)),
+    }
+
+    for rel in relations:
+        if rel not in centers_for_relation:
+            continue
+        c1_base, c2_base = centers_for_relation[rel]
+
+        for color1 in colors:
+            for shape1 in shapes:
+                for color2 in colors:
+                    for shape2 in shapes:
+                        if (color1 == color2) and (shape1 == shape2):
+                            continue
+
+                        for _ in range(n_per_combination):
+                            jitter = int(round(canvas_size * 0.03))
+                            c1 = (
+                                int(c1_base[0] + np.random.randint(-jitter, jitter + 1)),
+                                int(c1_base[1] + np.random.randint(-jitter, jitter + 1)),
+                            )
+                            c2 = (
+                                int(c2_base[0] + np.random.randint(-jitter, jitter + 1)),
+                                int(c2_base[1] + np.random.randint(-jitter, jitter + 1)),
+                            )
+
+                            noise = float(np.random.uniform(*noise_range))
+                            obj1 = {'shape': shape1, 'color': color1, 'size': 'small', 'center': c1}
+                            obj2 = {'shape': shape2, 'color': color2, 'size': 'small', 'center': c2}
+                            img, label, inferred = create_two_object_scene(
+                                obj1=obj1,
+                                obj2=obj2,
+                                canvas_size=canvas_size,
+                                noise=noise,
+                            )
+
+                            if inferred != rel:
+                                continue
+
+                            pairs.append(TwoObjectPair(
+                                image=img,
+                                label=label,
+                                relation=inferred,
+                                obj1=obj1,
+                                obj2=obj2,
+                            ))
+
+    return pairs
 
 
 # ============================================================

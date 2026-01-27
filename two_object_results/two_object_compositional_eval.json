@@ -1,0 +1,109 @@
+{
+  "checkpoint": "two_object_results/two_object_a2_20260127_223817.pt",
+  "config": {
+    "colors": [
+      "red",
+      "blue",
+      "green"
+    ],
+    "shapes": [
+      "circle",
+      "square"
+    ],
+    "relations": [
+      "above",
+      "left_of"
+    ],
+    "n_per_combination": 20,
+    "n_concepts": 200,
+    "n_epochs_visual": 10,
+    "n_epochs_lang": 15,
+    "n_epochs_binding": 10,
+    "visual_input_size": 56,
+    "split_rule": "hold_out_obj1_color",
+    "held_out_color": "green"
+  },
+  "train_metrics": {
+    "n": 800,
+    "winner_match": 1.0,
+    "topk_overlap": 0.644,
+    "topk_hit": 1.0,
+    "cosine_feat": 0.8618280609697103,
+    "cosine_proj": 0.8618280609697103
+  },
+  "held_out_metrics": {
+    "n": 400,
+    "winner_match": 0.5675,
+    "topk_overlap": 0.277,
+    "topk_hit": 0.99,
+    "cosine_feat": 0.5118862530961633,
+    "cosine_proj": 0.5118862530961633
+  },
+  "split": {
+    "held_out_color": "green",
+    "train_combos": [
+      "blue circle above blue square",
+      "blue circle above green circle",
+      "blue circle above green square",
+      "blue circle above red circle",
+      "blue circle above red square",
+      "blue circle left_of blue square",
+      "blue circle left_of green circle",
+      "blue circle left_of green square",
+      "blue circle left_of red circle",
+      "blue circle left_of red square",
+      "blue square above blue circle",
+      "blue square above green circle",
+      "blue square above green square",
+      "blue square above red circle",
+      "blue square above red square",
+      "blue square left_of blue circle",
+      "blue square left_of green circle",
+      "blue square left_of green square",
+      "blue square left_of red circle",
+      "blue square left_of red square",
+      "red circle above blue circle",
+      "red circle above blue square",
+      "red circle above green circle",
+      "red circle above green square",
+      "red circle above red square",
+      "red circle left_of blue circle",
+      "red circle left_of blue square",
+      "red circle left_of green circle",
+      "red circle left_of green square",
+      "red circle left_of red square",
+      "red square above blue circle",
+      "red square above blue square",
+      "red square above green circle",
+      "red square above green square",
+      "red square above red circle",
+      "red square left_of blue circle",
+      "red square left_of blue square",
+      "red square left_of green circle",
+      "red square left_of green square",
+      "red square left_of red circle"
+    ],
+    "test_combos": [
+      "green circle above blue circle",
+      "green circle above blue square",
+      "green circle above green square",
+      "green circle above red circle",
+      "green circle above red square",
+      "green circle left_of blue circle",
+      "green circle left_of blue square",
+      "green circle left_of green square",
+      "green circle left_of red circle",
+      "green circle left_of red square",
+      "green square above blue circle",
+      "green square above blue square",
+      "green square above green circle",
+      "green square above red circle",
+      "green square above red square",
+      "green square left_of blue circle",
+      "green square left_of blue square",
+      "green square left_of green circle",
+      "green square left_of red circle",
+      "green square left_of red square"
+    ]
+  }
+}

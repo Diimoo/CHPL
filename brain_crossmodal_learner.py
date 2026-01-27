@@ -145,6 +145,95 @@ class SimpleVisualCortex(nn.Module):
         return F.mse_loss(reconstructed, image)
 
 
+class SimpleVisualCortex56(nn.Module):
+    def __init__(self, feature_dim: int = 64):
+        super().__init__()
+
+        self.v1 = nn.Conv2d(3, 16, kernel_size=3, padding=1)
+        self.v2 = nn.Conv2d(16, 32, kernel_size=3, padding=1)
+        self.v4 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+        self.v4b = nn.Conv2d(64, 64, kernel_size=3, padding=1)
+
+        self.it = nn.Linear(64 * 3 * 3, feature_dim)
+
+        self.decoder_fc = nn.Linear(feature_dim, 64 * 3 * 3)
+        self.decoder_upsample = nn.Upsample(scale_factor=2, mode='nearest')
+        self.decoder_v4b = nn.Conv2d(64, 64, kernel_size=3, padding=1)
+        self.decoder_v4 = nn.Conv2d(64, 32, kernel_size=3, padding=1)
+        self.decoder_v2 = nn.Conv2d(32, 16, kernel_size=3, padding=1)
+        self.decoder_v1 = nn.Conv2d(16, 3, kernel_size=3, padding=1)
+
+        self.feature_dim = feature_dim
+        self.to(DEVICE)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 3:
+            x = x.unsqueeze(0)
+        if x.shape[-1] == 3:
+            x = x.permute(0, 3, 1, 2)
+
+        x = x.to(DEVICE)
+
+        x = F.relu(self.v1(x))
+        x = F.max_pool2d(x, 2)  # 56→28
+
+        x = F.relu(self.v2(x))
+        x = F.max_pool2d(x, 2)  # 28→14
+
+        x = F.relu(self.v4(x))
+        x = F.max_pool2d(x, 2)  # 14→7
+
+        x = F.relu(self.v4b(x))
+        x = F.adaptive_max_pool2d(x, (3, 3))
+
+        x = x.reshape(x.size(0), -1)
+        x = self.it(x)
+        x = F.normalize(x, dim=-1)
+        return x.squeeze(0) if x.size(0) == 1 else x
+
+    def reconstruct(self, features: torch.Tensor) -> torch.Tensor:
+        if features.dim() == 1:
+            features = features.unsqueeze(0)
+
+        x = F.relu(self.decoder_fc(features))
+        x = x.view(-1, 64, 3, 3)
+
+        # 3→6→7
+        x = self.decoder_upsample(x)  # 3→6
+        x = F.pad(x, (0, 1, 0, 1))  # 6→7
+        x = F.relu(self.decoder_v4b(x))
+
+        # 7→14
+        x = self.decoder_upsample(x)
+        x = F.relu(self.decoder_v4(x))
+
+        # 14→28
+        x = self.decoder_upsample(x)
+        x = F.relu(self.decoder_v2(x))
+
+        # 28→56
+        x = self.decoder_upsample(x)
+        x = torch.sigmoid(self.decoder_v1(x))
+
+        return x.squeeze(0) if x.size(0) == 1 else x
+
+    def reconstruction_loss(self, image: torch.Tensor) -> torch.Tensor:
+        if image.dim() == 3:
+            image = image.unsqueeze(0)
+        if image.shape[-1] == 3:
+            image = image.permute(0, 3, 1, 2)
+        image = image.to(DEVICE)
+
+        features = self.forward(image.permute(0, 2, 3, 1))
+        if features.dim() == 1:
+            features = features.unsqueeze(0)
+        reconstructed = self.reconstruct(features)
+        if reconstructed.dim() == 3:
+            reconstructed = reconstructed.unsqueeze(0)
+
+        return F.mse_loss(reconstructed, image)
+
+
 # ============================================================
 # SIMPLE LANGUAGE CORTEX (trainable from scratch)
 # ============================================================
@@ -554,12 +643,16 @@ class BrainCrossModalLearner:
         self,
         feature_dim: int = 64,
         n_concepts: int = 100,
+        visual_input_size: int = 28,
         atl_variant: ATLVariant = ATLVariant.BASELINE,
     ):
         self.feature_dim = feature_dim
         
         # Sensory cortices
-        self.visual = SimpleVisualCortex(feature_dim)
+        if int(visual_input_size) == 56:
+            self.visual = SimpleVisualCortex56(feature_dim)
+        else:
+            self.visual = SimpleVisualCortex(feature_dim)
         self.language = SimpleLanguageCortex(feature_dim)
         
         # Memory systems
