@@ -174,7 +174,7 @@ To isolate the effect of learning rules, we compared against a **backprop-autoen
 
 **Key insight:** The reduced bias compared to classification backprop stems from the **reconstruction objective**, not from Hebbian learning per se. Both brain-inspired and backprop-autoencoder show similar bias when trained with reconstruction loss.
 
-![Figure 1: Ablation Results](figure2_ablation_results.pdf)
+![Figure 1: Ablation Results](figure1_ablation_results.pdf)
 *Figure 1: Ablation study results. (A) Color categorization bias across conditions. Brain-inspired learning shows lower bias than classification backprop, but similar bias to backprop-autoencoder (fair comparison). (B) Cross-modal binding rates. ATL consolidation provides 41% improvement (p=0.01, d=1.44). Error bars show ±1 SD.*
 
 Interestingly, the backprop-autoencoder achieves **100% binding rate** compared to ~65% for brain-inspired learning. This suggests end-to-end gradient optimization is more efficient for cross-modal alignment, though the brain-inspired approach may offer other benefits (interpretability, biological plausibility).
@@ -197,7 +197,7 @@ Extended training (100 epochs, n=3 seeds) reveals a striking developmental traje
 
 **Phase 3: Bias Reduction (Epochs 25-100).** Bias gradually decreases toward neutral (1.07 ± 0.02), suggesting shape features emerge with continued training.
 
-![Figure 2: Developmental Trajectory](figure3_developmental_trajectory.pdf)
+![Figure 2: Developmental Trajectory](figure2_developmental_trajectory.pdf)
 *Figure 2: Developmental trajectory over extended training (100 epochs). (A) Color bias emerges early (peak at epoch 25) then reduces toward neutral, recapitulating infant visual development. (B) Cross-modal binding rate stabilizes around 55%. (C) Active concept count increases as training progresses. Thin lines: individual seeds (n=3); thick line: mean; shading: ±1 SD.*
 
 ### 4.5 Control Experiment: Trajectory is Not an Artifact
@@ -225,7 +225,7 @@ Among language conditions, shape-only labels showed a non-significant trend towa
 | Shape-only | 0.53±0.07 | 0.003 | 5.23 |
 | Full | 0.64±0.06 | 0.005 | 4.66 |
 
-![Figure 3: Language Ablation Study](figure4_language_ablation.png)
+![Figure 3: Language Ablation Study](figure3_language_ablation.png)
 *Figure 3: Language ablation study. (A) Developmental trajectories by condition. Visual-only training (black) maintains color bias throughout (final: 1.54±0.21), while all language conditions converge to shape bias (final: 0.53-0.65). The separation between visual-only and language conditions is highly significant (d>4.5, p<0.01). (B) Final bias comparison with error bars (n=3 seeds per condition). Dashed line indicates neutral bias (1.0). Values below 1.0 indicate shape bias.*
 
 **Key finding:** Language alignment provides necessary scaffolding for shape bias emergence. Visual reconstruction alone is insufficient—it produces persistent color bias even after 1000 epochs. However, the specific content of language labels (color words vs shape words) does not significantly affect the outcome.
