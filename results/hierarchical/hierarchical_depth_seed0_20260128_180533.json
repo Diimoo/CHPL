@@ -1,0 +1,24 @@
+{
+  "run_id": "hierarchical_depth_seed0_20260128_180533",
+  "split": "depth",
+  "split_desc": "Train: depth 1-2, Test: depth 3 (novel hierarchy level)",
+  "config": {
+    "temperature": 0.2,
+    "seed": 0,
+    "n_per_depth": 300
+  },
+  "evaluation": {
+    "train_similarity": 0.677422153155009,
+    "test_similarity": 0.6653256062666575,
+    "gap": 0.01209654688835149,
+    "test_by_depth": {
+      "3": 0.6653256062666575
+    }
+  },
+  "stats": {
+    "active_concepts": 61,
+    "activation_entropy": 3.2175397872924805,
+    "mean_lr": 0.009725500829517841
+  },
+  "verdict": "SUCCESS - generalizes to deeper hierarchy!"
+}

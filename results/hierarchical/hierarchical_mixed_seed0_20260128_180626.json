@@ -1,0 +1,26 @@
+{
+  "run_id": "hierarchical_mixed_seed0_20260128_180626",
+  "split": "mixed",
+  "split_desc": "Random 80/20 split across all depths",
+  "config": {
+    "temperature": 0.2,
+    "seed": 0,
+    "n_per_depth": 300
+  },
+  "evaluation": {
+    "train_similarity": 0.6965197335514758,
+    "test_similarity": 0.697606783774164,
+    "gap": -0.0010870502226881795,
+    "test_by_depth": {
+      "1": 0.7141631453756302,
+      "2": 0.6899249060400601,
+      "3": 0.6874796333959547
+    }
+  },
+  "stats": {
+    "active_concepts": 74,
+    "activation_entropy": 3.2932755947113037,
+    "mean_lr": 0.009719083085656166
+  },
+  "verdict": "SUCCESS - learns hierarchical composition"
+}

@@ -1,0 +1,30 @@
+{
+  "run_id": "coco_quick_seed0_20260128_194556",
+  "config": {
+    "subset_size": 100,
+    "image_size": 224,
+    "temperature": 0.2,
+    "epochs_visual": 8,
+    "epochs_lang": 12,
+    "epochs_binding": 8,
+    "seed": 0
+  },
+  "data": {
+    "train_samples": 0,
+    "test_samples": 0
+  },
+  "evaluation": {
+    "train_similarity": NaN,
+    "test_similarity": NaN,
+    "gap": NaN,
+    "visual_loss": NaN,
+    "language_loss": NaN
+  },
+  "stats": {
+    "active_concepts": 0,
+    "activation_entropy": 0.0,
+    "mean_lr": 0.009999999776482582
+  },
+  "verdict": "FAIL - Natural images need fundamental changes",
+  "recommendation": "Skip for Paper 1, Phase A = long-term project"
+}

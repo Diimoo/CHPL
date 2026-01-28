@@ -1,0 +1,30 @@
+{
+  "run_id": "coco_quick_seed0_20260128_194659",
+  "config": {
+    "subset_size": 500,
+    "image_size": 224,
+    "temperature": 0.2,
+    "epochs_visual": 10,
+    "epochs_lang": 15,
+    "epochs_binding": 10,
+    "seed": 0
+  },
+  "data": {
+    "train_samples": 400,
+    "test_samples": 100
+  },
+  "evaluation": {
+    "train_similarity": 0.7193703001737595,
+    "test_similarity": 0.7193791341781616,
+    "gap": -8.834004402102913e-06,
+    "visual_loss": 0.07369383271143307,
+    "language_loss": 2.1275430917739868e-05
+  },
+  "stats": {
+    "active_concepts": 7,
+    "activation_entropy": 1.8522813320159912,
+    "mean_lr": 0.009656397625803947
+  },
+  "verdict": "SUCCESS - Distributed ATL works on natural images!",
+  "recommendation": "INTEGRATE into paper as Section 4.4"
+}
