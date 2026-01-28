@@ -163,8 +163,20 @@ class SimpleVisualCortex56(nn.Module):
         self.decoder_v2 = nn.Conv2d(32, 16, kernel_size=3, padding=1)
         self.decoder_v1 = nn.Conv2d(16, 3, kernel_size=3, padding=1)
 
+        self._init_weights()
         self.feature_dim = feature_dim
         self.to(DEVICE)
+
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
+            elif isinstance(m, nn.Linear):
+                nn.init.xavier_uniform_(m.weight)
+                if m.bias is not None:
+                    nn.init.zeros_(m.bias)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if x.dim() == 3:
@@ -530,7 +542,7 @@ class ATLMinimal(ATL):
         n_concepts: int = 100,
         trace_decay: float = 0.99,
         usage_winner_penalty: float = 0.01,
-        unused_bonus: float = 0.5,
+        unused_bonus: float = 0.05,
     ):
         super().__init__(feature_dim=feature_dim, n_concepts=n_concepts)
         self.register_buffer('prototype_traces', torch.zeros(n_concepts, feature_dim, device=DEVICE))
@@ -622,6 +634,119 @@ class ATLExperimental(ATLMinimal):
         self.usage[winner] += 1
 
 
+class DistributedATL(nn.Module):
+    """
+    Distributed semantic binding using soft prototype activations.
+    
+    Key differences from winner-takes-all ATL:
+    - Multiple prototypes activate per input (soft assignment via softmax)
+    - Binding = similarity of activation PATTERNS between modalities
+    - Learning = pull ALL activated prototypes toward input, weighted by activation
+    """
+
+    def __init__(
+        self,
+        feature_dim: int = 64,
+        n_concepts: int = 200,
+        temperature: float = 0.1,
+        activation_threshold: float = 0.01,
+        base_lr: float = 0.01,
+    ):
+        super().__init__()
+        self.n_concepts = n_concepts
+        self.feature_dim = feature_dim
+        self.temperature = temperature
+        self.activation_threshold = activation_threshold
+        self.base_lr = base_lr
+
+        self.vis_proj = nn.Linear(feature_dim, feature_dim, bias=False)
+        self.lang_proj = nn.Linear(feature_dim, feature_dim, bias=False)
+
+        self.register_buffer(
+            'prototypes',
+            F.normalize(torch.randn(n_concepts, feature_dim), dim=-1)
+        )
+        self.register_buffer('activation_counts', torch.zeros(n_concepts))
+        self.register_buffer('prototype_lr', torch.ones(n_concepts) * base_lr)
+
+        self.to(DEVICE)
+
+    def get_activation_pattern(self, features: torch.Tensor, modality: str = 'visual'):
+        """Compute soft activation pattern over all prototypes."""
+        if modality == 'visual':
+            projected = self.vis_proj(features.flatten())
+        else:
+            projected = self.lang_proj(features.flatten())
+
+        projected = F.normalize(projected, dim=-1)
+        similarities = torch.matmul(self.prototypes, projected)
+        activations = torch.softmax(similarities / self.temperature, dim=0)
+        return activations, projected
+
+    def consolidate(self, vis_features: torch.Tensor, lang_features: torch.Tensor):
+        """Bind visual and language through distributed activation."""
+        vis_act, vis_proj = self.get_activation_pattern(vis_features, 'visual')
+        lang_act, lang_proj = self.get_activation_pattern(lang_features, 'language')
+
+        # Binding quality: cosine similarity between activation patterns
+        pattern_sim = F.cosine_similarity(vis_act.unsqueeze(0), lang_act.unsqueeze(0)).item()
+
+        # KL divergence (how different are the distributions)
+        kl_div = F.kl_div(
+            (vis_act + 1e-10).log(), lang_act, reduction='sum'
+        ).item()
+
+        # Hebbian update: all activated prototypes move toward avg projection
+        with torch.no_grad():
+            avg_act = (vis_act + lang_act) / 2
+            avg_proj = F.normalize((vis_proj + lang_proj) / 2, dim=-1)
+
+            for i in range(self.n_concepts):
+                act = avg_act[i].item()
+                if act > self.activation_threshold:
+                    lr = self.prototype_lr[i].item() * act
+                    delta = lr * (avg_proj - self.prototypes[i])
+                    self.prototypes[i] = F.normalize(self.prototypes[i] + delta, dim=-1)
+                    self.activation_counts[i] += act
+                    # Meta-plasticity: reduce lr for frequently used
+                    self.prototype_lr[i] *= 0.999
+
+        return {
+            'pattern_similarity': pattern_sim,
+            'kl_divergence': kl_div,
+            'vis_activations': vis_act,
+            'lang_activations': lang_act,
+        }
+
+    def similarity(self, vis_features: torch.Tensor, lang_features: torch.Tensor) -> float:
+        """Measure how well visual and language bind (pattern similarity)."""
+        vis_act, _ = self.get_activation_pattern(vis_features, 'visual')
+        lang_act, _ = self.get_activation_pattern(lang_features, 'language')
+        return F.cosine_similarity(vis_act.unsqueeze(0), lang_act.unsqueeze(0)).item()
+
+    def activate(self, features: torch.Tensor, modality: str = 'visual'):
+        """Return top-1 prototype for compatibility with existing code."""
+        act, proj = self.get_activation_pattern(features, modality)
+        winner = int(act.argmax().item())
+        return proj, winner
+
+    def get_active_concepts(self) -> int:
+        return int((self.activation_counts > 0.1).sum().item())
+
+    def get_stats(self) -> dict:
+        active = self.get_active_concepts()
+        total_act = self.activation_counts.sum().item()
+        entropy = 0.0
+        if total_act > 0:
+            p = self.activation_counts / (total_act + 1e-10)
+            entropy = -float((p * (p + 1e-10).log()).sum().item())
+        return {
+            'active_concepts': active,
+            'activation_entropy': entropy,
+            'mean_lr': float(self.prototype_lr.mean().item()),
+        }
+
+
 # ============================================================
 # BRAIN-LIKE CROSS-MODAL LEARNER
 # ============================================================
@@ -645,8 +770,11 @@ class BrainCrossModalLearner:
         n_concepts: int = 100,
         visual_input_size: int = 28,
         atl_variant: ATLVariant = ATLVariant.BASELINE,
+        use_distributed_atl: bool = False,
+        distributed_temperature: float = 0.1,
     ):
         self.feature_dim = feature_dim
+        self.use_distributed_atl = use_distributed_atl
         
         # Sensory cortices
         if int(visual_input_size) == 56:
@@ -657,7 +785,9 @@ class BrainCrossModalLearner:
         
         # Memory systems
         self.hippocampus = Hippocampus(feature_dim)
-        if atl_variant == ATLVariant.MINIMAL:
+        if use_distributed_atl:
+            self.atl = DistributedATL(feature_dim, n_concepts, temperature=distributed_temperature)
+        elif atl_variant == ATLVariant.MINIMAL:
             self.atl = ATLMinimal(feature_dim, n_concepts)
         elif atl_variant == ATLVariant.EXPERIMENTAL:
             self.atl = ATLExperimental(feature_dim, n_concepts)

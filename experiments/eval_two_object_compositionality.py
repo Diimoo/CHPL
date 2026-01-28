@@ -90,8 +90,16 @@ def main():
     n_concepts = int(config.get('n_concepts', 200))
     n_per_combination = int(config.get('n_per_combination', 20))
     visual_input_size = int(config.get('visual_input_size', 28))
+    atl_variant = str(config.get('atl_variant', 'baseline'))
 
-    brain = BrainCrossModalLearner(feature_dim=64, n_concepts=n_concepts, visual_input_size=visual_input_size)
+    from brain_crossmodal_learner import ATLVariant
+
+    brain = BrainCrossModalLearner(
+        feature_dim=64,
+        n_concepts=n_concepts,
+        visual_input_size=visual_input_size,
+        atl_variant=ATLVariant[atl_variant.upper()],
+    )
     brain.visual.load_state_dict(ckpt['visual_state'])
     brain.language.load_state_dict(ckpt['language_state'])
     brain.atl.load_state_dict(ckpt['atl_state'])

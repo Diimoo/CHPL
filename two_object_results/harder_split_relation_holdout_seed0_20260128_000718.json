@@ -1,0 +1,22 @@
+{
+  "run_id": "relation_holdout_seed0_20260128_000718",
+  "split_type": "relation_holdout",
+  "split_desc": "Train: {'left_of', 'above'}, Test: {'right_of', 'below'}",
+  "config": {
+    "temperature": 0.2,
+    "seed": 0,
+    "n_train": 900,
+    "n_test": 900
+  },
+  "evaluation": {
+    "train_similarity": 0.6960661815272438,
+    "test_similarity": 0.6756511186891132,
+    "gap": 0.02041506283813055
+  },
+  "stats": {
+    "active_concepts": 130,
+    "activation_entropy": 4.218758583068848,
+    "mean_lr": 0.007180832326412201
+  },
+  "verdict": "SUCCESS - generalizes to novel split"
+}

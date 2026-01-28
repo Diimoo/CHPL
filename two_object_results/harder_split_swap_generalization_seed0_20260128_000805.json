@@ -1,0 +1,22 @@
+{
+  "run_id": "swap_generalization_seed0_20260128_000805",
+  "split_type": "swap_generalization",
+  "split_desc": "Train: color1 < color2, Test: color1 >= color2 (swapped order)",
+  "config": {
+    "temperature": 0.2,
+    "seed": 0,
+    "n_train": 720,
+    "n_test": 1080
+  },
+  "evaluation": {
+    "train_similarity": 0.6659826081660059,
+    "test_similarity": 0.64850142614709,
+    "gap": 0.017481182018915797
+  },
+  "stats": {
+    "active_concepts": 98,
+    "activation_entropy": 3.8793840408325195,
+    "mean_lr": 0.008109884336590767
+  },
+  "verdict": "SUCCESS - generalizes to novel split"
+}

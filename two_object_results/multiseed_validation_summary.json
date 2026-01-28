@@ -1,0 +1,63 @@
+{
+  "seeds": [
+    0,
+    42,
+    123,
+    456,
+    999
+  ],
+  "temperature": 0.2,
+  "per_seed": [
+    {
+      "seed": 0,
+      "train_sim": 0.6786594650149346,
+      "held_out_sim": 0.6674492840468883,
+      "gap": 0.011210180968046268,
+      "active_concepts": 103
+    },
+    {
+      "seed": 42,
+      "train_sim": 0.6769556090980768,
+      "held_out_sim": 0.6785834482312203,
+      "gap": -0.0016278391331434605,
+      "active_concepts": 140
+    },
+    {
+      "seed": 123,
+      "train_sim": 0.6798777645826339,
+      "held_out_sim": 0.625706365853548,
+      "gap": 0.05417139872908594,
+      "active_concepts": 137
+    },
+    {
+      "seed": 456,
+      "train_sim": 0.6996375973522663,
+      "held_out_sim": 0.6984831513464451,
+      "gap": 0.0011544460058211525,
+      "active_concepts": 137
+    },
+    {
+      "seed": 999,
+      "train_sim": 0.6964682592451572,
+      "held_out_sim": 0.6471297223865986,
+      "gap": 0.0493385368585586,
+      "active_concepts": 118
+    }
+  ],
+  "aggregated": {
+    "train_mean": 0.6863197390586138,
+    "train_std": 0.009677019944153827,
+    "held_out_mean": 0.6634703943729401,
+    "held_out_std": 0.02515260830142719,
+    "gap_mean": 0.0228493446856737,
+    "gap_std": 0.02403339202004341,
+    "concepts_mean": 127.0,
+    "concepts_std": 14.324803663575986
+  },
+  "baseline_comparison": {
+    "a2_baseline_held_out": 0.512,
+    "distributed_held_out_mean": 0.6634703943729401,
+    "improvement_pct": 29.584061400964856
+  },
+  "robust": false
+}

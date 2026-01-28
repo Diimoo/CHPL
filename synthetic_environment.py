@@ -221,6 +221,145 @@ def get_spatial_relation(
     return 'left_of' if x1 < x2 else 'right_of'
 
 
+@dataclass
+class VariableObjectPair:
+    """A scene with 1-4 objects."""
+    image: np.ndarray
+    label: str
+    n_objects: int
+    objects: List[Dict[str, object]]
+
+    def to_tensor(self) -> Tuple[torch.Tensor, str]:
+        img_t = torch.from_numpy(self.image).float()
+        return img_t, self.label
+
+
+def create_variable_object_scene(
+    objects: List[Dict[str, object]],
+    canvas_size: int = 56,
+    noise: float = 0.0,
+) -> Tuple[np.ndarray, str]:
+    """Create a scene with 1-4 objects."""
+    img = np.zeros((canvas_size, canvas_size, 3), dtype=np.float32)
+    
+    for obj in objects:
+        obj_img = create_stimulus_on_canvas(
+            shape=str(obj['shape']),
+            color=str(obj['color']),
+            size=str(obj.get('size', 'small')),
+            canvas_size=canvas_size,
+            center=tuple(obj['center']),
+            noise=0.0,
+        )
+        img = np.clip(img + obj_img, 0.0, 1.0)
+    
+    if noise > 0:
+        img += np.random.randn(canvas_size, canvas_size, 3).astype(np.float32) * noise
+        img = np.clip(img, 0.0, 1.0)
+    
+    # Generate label based on number of objects
+    if len(objects) == 1:
+        label = f"{objects[0]['color']} {objects[0]['shape']}"
+    elif len(objects) == 2:
+        rel = get_spatial_relation(tuple(objects[0]['center']), tuple(objects[1]['center']))
+        label = f"{objects[0]['color']} {objects[0]['shape']} {rel} {objects[1]['color']} {objects[1]['shape']}"
+    else:
+        # For 3+ objects, use "and" connector
+        parts = [f"{obj['color']} {obj['shape']}" for obj in objects]
+        label = " and ".join(parts)
+    
+    return img.astype(np.float32), label
+
+
+def _get_grid_positions(n_objects: int, canvas_size: int = 56) -> List[Tuple[int, int]]:
+    """Get non-overlapping grid positions for n objects."""
+    margin = int(canvas_size * 0.2)
+    positions = []
+    
+    if n_objects == 1:
+        positions = [(canvas_size // 2, canvas_size // 2)]
+    elif n_objects == 2:
+        positions = [
+            (canvas_size // 3, canvas_size // 2),
+            (2 * canvas_size // 3, canvas_size // 2),
+        ]
+    elif n_objects == 3:
+        positions = [
+            (canvas_size // 4, canvas_size // 3),
+            (3 * canvas_size // 4, canvas_size // 3),
+            (canvas_size // 2, 2 * canvas_size // 3),
+        ]
+    elif n_objects == 4:
+        positions = [
+            (canvas_size // 3, canvas_size // 3),
+            (2 * canvas_size // 3, canvas_size // 3),
+            (canvas_size // 3, 2 * canvas_size // 3),
+            (2 * canvas_size // 3, 2 * canvas_size // 3),
+        ]
+    
+    return positions
+
+
+def generate_variable_object_pairs(
+    colors: List[str],
+    shapes: List[str],
+    n_objects_range: Tuple[int, int] = (1, 4),
+    n_per_config: int = 10,
+    canvas_size: int = 56,
+    noise_range: Tuple[float, float] = (0.0, 0.03),
+) -> List[VariableObjectPair]:
+    """Generate scenes with variable number of objects (1-4)."""
+    pairs: List[VariableObjectPair] = []
+    
+    for n_obj in range(n_objects_range[0], n_objects_range[1] + 1):
+        base_positions = _get_grid_positions(n_obj, canvas_size)
+        
+        # Generate combinations of colors and shapes
+        from itertools import product, combinations
+        all_attrs = list(product(colors, shapes))
+        
+        # For each unique combination of n objects
+        seen_combos = set()
+        for _ in range(n_per_config * len(all_attrs) ** n_obj // 10):  # Sample
+            # Random selection of attributes (allow repeats for variety)
+            obj_attrs = [all_attrs[np.random.randint(len(all_attrs))] for _ in range(n_obj)]
+            
+            # Skip if all objects identical
+            if len(set(obj_attrs)) == 1 and n_obj > 1:
+                continue
+            
+            combo_key = tuple(sorted(obj_attrs))
+            if combo_key in seen_combos and n_obj <= 2:
+                continue
+            seen_combos.add(combo_key)
+            
+            # Add jitter to positions
+            jitter = int(canvas_size * 0.05)
+            objects = []
+            for i, (color, shape) in enumerate(obj_attrs):
+                cx, cy = base_positions[i]
+                cx += np.random.randint(-jitter, jitter + 1)
+                cy += np.random.randint(-jitter, jitter + 1)
+                objects.append({
+                    'shape': shape,
+                    'color': color,
+                    'size': 'small',
+                    'center': (cx, cy),
+                })
+            
+            noise = float(np.random.uniform(*noise_range))
+            img, label = create_variable_object_scene(objects, canvas_size, noise)
+            
+            pairs.append(VariableObjectPair(
+                image=img,
+                label=label,
+                n_objects=n_obj,
+                objects=objects,
+            ))
+    
+    return pairs
+
+
 def downsample_scene(scene: np.ndarray, out_size: int = 28) -> np.ndarray:
     """Downsample a scene (e.g., 56x56x3) to out_size x out_size x 3."""
     if scene.ndim != 3 or scene.shape[-1] != 3:

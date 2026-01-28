@@ -1,5 +1,5 @@
 {
-  "checkpoint": "two_object_results/two_object_a2_20260127_223817.pt",
+  "checkpoint": "two_object_results/two_object_a2_20260127_232257.pt",
   "config": {
     "colors": [
       "red",
@@ -20,24 +20,25 @@
     "n_epochs_lang": 15,
     "n_epochs_binding": 10,
     "visual_input_size": 56,
+    "atl_variant": "minimal",
     "split_rule": "hold_out_obj1_color",
     "held_out_color": "green"
   },
   "train_metrics": {
     "n": 800,
-    "winner_match": 1.0,
-    "topk_overlap": 0.644,
-    "topk_hit": 1.0,
-    "cosine_feat": 0.8618280609697103,
-    "cosine_proj": 0.8618280609697103
+    "winner_match": 0.0875,
+    "topk_overlap": 0.44275,
+    "topk_hit": 0.62125,
+    "cosine_feat": 0.8547422052174807,
+    "cosine_proj": 0.8547422052174807
   },
   "held_out_metrics": {
     "n": 400,
-    "winner_match": 0.5675,
-    "topk_overlap": 0.277,
-    "topk_hit": 0.99,
-    "cosine_feat": 0.5118862530961633,
-    "cosine_proj": 0.5118862530961633
+    "winner_match": 0.0625,
+    "topk_overlap": 0.19700000000000004,
+    "topk_hit": 0.235,
+    "cosine_feat": 0.6707337362319231,
+    "cosine_proj": 0.6707337362319231
   },
   "split": {
     "held_out_color": "green",

@@ -1,0 +1,47 @@
+{
+  "run_id": "20260127_232257",
+  "config": {
+    "colors": [
+      "red",
+      "blue",
+      "green"
+    ],
+    "shapes": [
+      "circle",
+      "square"
+    ],
+    "relations": [
+      "above",
+      "left_of"
+    ],
+    "n_per_combination": 20,
+    "n_concepts": 200,
+    "n_epochs_visual": 10,
+    "n_epochs_lang": 15,
+    "n_epochs_binding": 10,
+    "visual_input_size": 56,
+    "atl_variant": "minimal",
+    "split_rule": "hold_out_obj1_color",
+    "held_out_color": "green"
+  },
+  "binding_rates": [
+    0.6375,
+    0.73125,
+    0.4075,
+    0.325,
+    0.2325,
+    0.18,
+    0.16125,
+    0.13625,
+    0.1175,
+    0.075
+  ],
+  "held_out_accuracy": 0.05,
+  "stats": {
+    "total_episodes": 8000,
+    "total_consolidations": 7960,
+    "unique_bindings": 40,
+    "hippocampus_memories": 1000,
+    "atl_active_concepts": 186
+  }
+}

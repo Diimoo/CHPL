@@ -1,0 +1,22 @@
+{
+  "run_id": "novel_combination_seed0_20260128_000842",
+  "split_type": "novel_combination",
+  "split_desc": "Train: obj1 != green, Test: obj1 = green",
+  "config": {
+    "temperature": 0.2,
+    "seed": 0,
+    "n_train": 1200,
+    "n_test": 600
+  },
+  "evaluation": {
+    "train_similarity": 0.6901059544583161,
+    "test_similarity": 0.6476542188723882,
+    "gap": 0.04245173558592796
+  },
+  "stats": {
+    "active_concepts": 142,
+    "activation_entropy": 4.335775852203369,
+    "mean_lr": 0.006781919859349728
+  },
+  "verdict": "SUCCESS - generalizes to novel split"
+}

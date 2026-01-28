@@ -3,6 +3,7 @@
 import sys
 sys.path.insert(0, '/home/ahmed/Dokumente/Neuroscience/CHPL')
 
+import argparse
 import json
 from pathlib import Path
 from datetime import datetime
@@ -23,6 +24,17 @@ def _parse_label(label: str):
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument(
+        '--atl_variant',
+        type=str,
+        default='minimal',
+        choices=['baseline', 'minimal', 'experimental'],
+    )
+    args = ap.parse_args()
+
+    from brain_crossmodal_learner import ATLVariant
+
     colors = ['red', 'blue', 'green']
     shapes = ['circle', 'square']
     relations = ['above', 'left_of']
@@ -46,7 +58,12 @@ def main():
     np.random.seed(0)
     torch.manual_seed(0)
 
-    brain = BrainCrossModalLearner(feature_dim=64, n_concepts=n_concepts, visual_input_size=canvas_size)
+    brain = BrainCrossModalLearner(
+        feature_dim=64,
+        n_concepts=n_concepts,
+        visual_input_size=canvas_size,
+        atl_variant=ATLVariant[args.atl_variant.upper()],
+    )
 
     pairs56 = generate_two_object_pairs(
         colors=colors,
@@ -144,6 +161,7 @@ def main():
             'n_epochs_lang': n_epochs_lang,
             'n_epochs_binding': n_epochs_binding,
             'visual_input_size': canvas_size,
+            'atl_variant': args.atl_variant,
             'split_rule': 'hold_out_obj1_color',
             'held_out_color': held_out_color,
         },

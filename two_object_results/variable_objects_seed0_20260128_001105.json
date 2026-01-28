@@ -1,0 +1,30 @@
+{
+  "run_id": "variable_objects_seed0_20260128_001105",
+  "config": {
+    "temperature": 0.2,
+    "seed": 0,
+    "train_counts": [
+      1,
+      2,
+      3
+    ],
+    "test_count": 4
+  },
+  "per_count_similarity": {
+    "1": 0.6389031633734703,
+    "2": 0.6672375693040735,
+    "3": 0.6612543317710946,
+    "4": 0.6374111242297769
+  },
+  "evaluation": {
+    "train_similarity": 0.6612710237907151,
+    "test_similarity": 0.6374111242297769,
+    "gap": 0.023859899560938258
+  },
+  "stats": {
+    "active_concepts": 97,
+    "activation_entropy": 3.0499038696289062,
+    "mean_lr": 0.00933788437396288
+  },
+  "verdict": "SUCCESS - generalizes to novel object count!"
+}
