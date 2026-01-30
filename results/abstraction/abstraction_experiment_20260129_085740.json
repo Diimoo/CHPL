@@ -1,0 +1,57 @@
+{
+  "abstraction_training": {
+    "final_loss": 21.23781584739685
+  },
+  "analogy_training": {
+    "final_accuracy": 1.0
+  },
+  "analogy_test": {
+    "accuracy": 1.0,
+    "mean_similarity": 0.9687979906797409,
+    "per_type": {
+      "color": 0.9735867666161578,
+      "shape": 0.9647186630302005
+    },
+    "passed": true
+  },
+  "few_shot_test": {
+    "positive_accuracy": 0.5,
+    "negative_accuracy": 0.5,
+    "overall_accuracy": 0.5,
+    "per_concept": [
+      {
+        "concept": "warm_shape",
+        "positive_acc": 1.0,
+        "negative_acc": 0.0
+      },
+      {
+        "concept": "cool_shape",
+        "positive_acc": 0.5,
+        "negative_acc": 1.0
+      },
+      {
+        "concept": "round_thing",
+        "positive_acc": 0.0,
+        "negative_acc": 0.5
+      },
+      {
+        "concept": "pointy_thing",
+        "positive_acc": 1.0,
+        "negative_acc": 0.0
+      },
+      {
+        "concept": "boxy_thing",
+        "positive_acc": 0.0,
+        "negative_acc": 1.0
+      }
+    ],
+    "passed": false
+  },
+  "creative_test": {
+    "activation_diversity": 0.9799331559015552,
+    "vocab_diversity": 0.1111111111111111,
+    "overall_diversity": 0.5455221335063332,
+    "n_unique_words": 10,
+    "passed": true
+  }
+}

@@ -1,0 +1,14 @@
+
+# Large data files (don't commit)
+data/wikipedia/
+data/coco/
+data/video_frames/
+data/videos/
+models/language/*.pkl
+models/grounding/*.pkl
+models/knowledge/*.pkl
+*.db
+dialogue_training_data.pkl
+grounded_vocabulary*.pkl
+knowledge_graph.pkl
+language_model/

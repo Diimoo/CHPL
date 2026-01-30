@@ -1,0 +1,29 @@
+{
+  "causal_training": {
+    "final_accuracy": 1.0,
+    "final_loss": 0.0007314418560921796
+  },
+  "planning_training": {
+    "final_success_rate": 1.0,
+    "final_reward": 1.1060385954380036
+  },
+  "causal_test": {
+    "accuracy": 1.0,
+    "confusion": {
+      "('push', 'push')": 50,
+      "('block', 'block')": 50,
+      "('independent', 'independent')": 50,
+      "('chain', 'chain')": 50
+    },
+    "passed": true
+  },
+  "planning_test": {
+    "success_rate": 1.0,
+    "avg_path_length": 1.0,
+    "passed": true
+  },
+  "counterfactual_test": {
+    "mean_difference": 0.03071718115359545,
+    "passed": false
+  }
+}

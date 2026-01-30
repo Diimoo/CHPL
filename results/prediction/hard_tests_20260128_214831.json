@@ -1,0 +1,89 @@
+{
+  "timestamp": "2026-01-28T21:48:31.148079",
+  "tests": {
+    "novel_shapes": {
+      "test": "novel_shapes",
+      "mean_cos_sim": 0.9052373270193735,
+      "passed": true,
+      "details": {
+        "cos_sims": [
+          0.8299697296960014,
+          0.9069926738739014,
+          0.9110966495105198,
+          0.898659382547651,
+          0.9570710062980652,
+          0.9276345201901027
+        ],
+        "sequences": [
+          "red cross",
+          "blue cross",
+          "green cross",
+          "red diamond",
+          "blue diamond",
+          "green diamond"
+        ]
+      }
+    },
+    "novel_colors": {
+      "test": "novel_colors",
+      "mean_cos_sim": 0.9457681193238212,
+      "passed": true,
+      "details": {
+        "cos_sims": [
+          0.9511032700538635,
+          0.9401129654475621,
+          0.944868130343301,
+          0.9535456640379769,
+          0.9464808276721409,
+          0.9384978583880833
+        ],
+        "sequences": [
+          "purple circle",
+          "purple square",
+          "purple triangle",
+          "orange circle",
+          "orange square",
+          "orange triangle"
+        ]
+      }
+    },
+    "novel_motion": {
+      "test": "novel_motion",
+      "mean_cos_sim": 0.9179374892302233,
+      "passed": true,
+      "details": {
+        "patterns": {
+          "circular": 0.9006957010789352,
+          "zigzag": 0.9114221817917294,
+          "accelerating": 0.9416945848200057
+        }
+      }
+    },
+    "long_horizon": {
+      "test": "long_horizon",
+      "step_accuracies": {
+        "1": 0.9555850505828858,
+        "2": 0.8448769867420196,
+        "3": 0.6177588477730751,
+        "4": 0.5061028718948364,
+        "5": 0.4428607143461704
+      },
+      "decay_rate": 0.10254486724734306,
+      "passed": true
+    },
+    "stationary_vs_moving": {
+      "test": "stationary_vs_moving",
+      "stationary_diff": 0.06108854611714681,
+      "moving_diff": 0.08901389837265014,
+      "discrimination": 0.027925352255503334,
+      "passed": true
+    },
+    "velocity_sensitivity": {
+      "test": "velocity_sensitivity",
+      "mean_pairwise_diff": 0.08079906304677327,
+      "right_slow_vs_fast": 0.020295262336730957,
+      "right_vs_left": 0.0837240219116211,
+      "passed": true
+    }
+  }
+}

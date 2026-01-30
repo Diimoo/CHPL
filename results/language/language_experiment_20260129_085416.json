@@ -1,0 +1,30 @@
+{
+  "description_training": {
+    "final_loss": 0.28441029923502353
+  },
+  "qa_training": {
+    "final_accuracy": 0.8175,
+    "final_loss": 0.49990177824924276
+  },
+  "description_test": {
+    "word_overlap": 0.8109999999999999,
+    "exact_match_rate": 0.44,
+    "passed": true
+  },
+  "qa_test": {
+    "accuracy": 0.86,
+    "per_type": {
+      "color": 1.0,
+      "shape": 0.8181818181818182,
+      "location": 0.6363636363636364,
+      "count": 0.8181818181818182,
+      "exists": 1.0,
+      "relation": 0.8947368421052632
+    },
+    "passed": true
+  },
+  "causal_explanation_test": {
+    "accuracy": 1.0,
+    "passed": true
+  }
+}
