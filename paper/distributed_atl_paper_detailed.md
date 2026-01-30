@@ -137,6 +137,37 @@ Recent work on object-centric representations (Locatello et al., 2020; Kipf et a
 
 Our work is complementary: object-centric methods address **perceptual binding** (which features belong to which object), while we address **semantic binding** (how visual and linguistic representations align). Future work could combine both approaches.
 
+### 2.6 Cognitive Development in AI Systems
+
+Modeling cognitive development has attracted increasing interest in AI:
+
+- **Developmental robotics** (Cangelosi & Schlesinger, 2015): Embodies developmental principles in robotic systems
+- **Intuitive physics** (Battaglia et al., 2013; Lerer et al., 2016): Learning physical prediction from observation
+- **Core knowledge** (Spelke & Kinzler, 2007): Innate foundations for object, number, and space
+- **Language acquisition** (Roy & Pentland, 2002): Grounding language in sensorimotor experience
+
+Our work demonstrates that a single architecture (Distributed ATL) can support a developmental progression from perception to prediction to language to abstraction—without architectural modifications across phases.
+
+### 2.7 Large-Scale Language Models and Grounding
+
+Modern language models achieve impressive performance but lack perceptual grounding:
+
+- **GPT/BERT** (Radford et al., 2019; Devlin et al., 2019): Pure text, no visual grounding
+- **CLIP/ALIGN** (Radford et al., 2021; Jia et al., 2021): Contrastive image-text alignment
+- **Flamingo/GPT-4V** (Alayrac et al., 2022; OpenAI, 2023): Multimodal but scale-dependent
+
+We show that even with modest scale (290k vocabulary, 20 min training), explicit grounding through distributed binding achieves compositional generalization that eludes much larger models.
+
+### 2.8 Knowledge Representation and Reasoning
+
+Classical AI emphasized structured knowledge:
+
+- **Semantic networks** (Quillian, 1967): Graph-based concept relationships
+- **Frames/Scripts** (Minsky, 1974; Schank & Abelson, 1977): Structured situation knowledge
+- **Knowledge graphs** (Bollacker et al., 2008): Large-scale factual databases
+
+Our hierarchical knowledge graph (atomic → rules → principles) bridges neural pattern learning with structured knowledge, organizing 1,985 patterns extracted from educational videos.
+
 ---
 
 ## 3. Methods
@@ -559,6 +590,168 @@ We define success as:
 | Phase 1 epochs | 10 | Visual reconstruction |
 | Phase 2 epochs | 15 | Cross-modal alignment |
 | Phase 3 epochs | 10 | Distributed consolidation |
+
+### 3.9 Cognitive Development Extensions (Phases 1-4)
+
+The same Distributed ATL architecture extends to cognitive capabilities beyond scene understanding.
+
+#### 3.9.1 Temporal Prediction Module (Phase 1)
+
+We add a predictor network that forecasts future visual states:
+
+```python
+class TemporalPredictor(nn.Module):
+    def __init__(self, feature_dim=64):
+        self.predictor = nn.Sequential(
+            nn.Linear(feature_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, feature_dim)
+        )
+    
+    def forward(self, current_state):
+        return F.normalize(self.predictor(current_state), dim=-1)
+```
+
+**Training:** Given temporal sequences, minimize prediction error:
+```
+loss = 1 - cosine(predicted_next, actual_next)
+```
+
+**Object permanence:** The system maintains hidden object representations in the ATL even when occluded, enabling recall when objects reappear.
+
+#### 3.9.2 Causal Inference Module (Phase 2)
+
+Causal reasoning builds on prediction by detecting interaction patterns:
+
+```python
+def detect_causation(before_contact, after_contact, obj1_motion, obj2_motion):
+    # If obj1 was moving, obj2 was stationary, then obj2 moves after contact
+    if obj1_motion > threshold and obj2_motion_before < threshold:
+        if obj2_motion_after > threshold:
+            return "obj1 caused obj2 to move"
+    return "independent motion"
+```
+
+**Goal-directed planning:** Inverse model predicts actions needed to reach goal states.
+
+#### 3.9.3 Language Generation Module (Phase 3)
+
+Bidirectional binding enables scene description:
+
+```python
+def describe_scene(visual_features):
+    # Get ATL activation pattern
+    pattern = atl.get_pattern(visual_features)
+    
+    # Find words whose patterns best match
+    best_words = []
+    for word, word_pattern in vocabulary.items():
+        if cosine(pattern, word_pattern) > threshold:
+            best_words.append(word)
+    
+    return compose_description(best_words)
+```
+
+**Visual QA:** Questions activate relevant subpatterns; answers are words with highest overlap.
+
+#### 3.9.4 Hierarchical Abstraction Module (Phase 4)
+
+Analogical reasoning uses relational pattern transfer:
+
+```python
+def solve_analogy(A, B, C):
+    # A:B :: C:?
+    relation = atl.get_pattern(B) - atl.get_pattern(A)
+    predicted_D = atl.get_pattern(C) + relation
+    return find_closest_concept(predicted_D)
+```
+
+### 3.10 Adult-Level Extensions (Phases 5-8)
+
+#### 3.10.1 Distributional Language Learning (Phase 5)
+
+We scale vocabulary using Word2Vec on Wikipedia:
+
+**Corpus:** Simple English Wikipedia (545,837 articles, 106M words)
+**Algorithm:** Skip-gram with negative sampling
+**Embedding dimension:** 64 (matching ATL feature dimension)
+**Training:** 11 minutes on GPU
+
+```python
+from gensim.models import Word2Vec
+model = Word2Vec(sentences, vector_size=64, window=5, 
+                 min_count=5, workers=4, sg=1)
+```
+
+#### 3.10.2 Visual Grounding at Scale (Phase 6)
+
+COCO images provide visual supervision for word embeddings:
+
+```python
+def ground_vocabulary(coco_images, captions, brain):
+    grounded = {}
+    for image, caption in zip(coco_images, captions):
+        visual_activation = brain.visual(image)
+        for word in tokenize(caption):
+            if word not in grounded:
+                grounded[word] = []
+            grounded[word].append(visual_activation)
+    
+    # Average activations per word
+    for word in grounded:
+        grounded[word] = mean(grounded[word])
+    
+    # Propagate to semantic neighbors
+    propagate_grounding(grounded, word2vec_model, hops=3)
+    return grounded
+```
+
+#### 3.10.3 Knowledge Graph from Video (Phase 7)
+
+Educational videos provide temporal patterns:
+
+```python
+def extract_patterns(video_frames, brain):
+    patterns = []
+    for i in range(len(video_frames) - 1):
+        feat_t = brain.visual(video_frames[i])
+        feat_t1 = brain.visual(video_frames[i+1])
+        
+        change = cosine_distance(feat_t, feat_t1)
+        if change > threshold:
+            patterns.append({
+                'before': feat_t,
+                'after': feat_t1,
+                'change': change
+            })
+    return patterns
+```
+
+**Hierarchical organization:** Atomic → Rules → Principles
+
+#### 3.10.4 Dialogue System (Phase 8)
+
+Multi-turn conversation with context tracking:
+
+```python
+class DialogueManager:
+    def __init__(self, knowledge_graph, grounded_vocab):
+        self.context = []
+        self.knowledge = knowledge_graph
+        self.vocab = grounded_vocab
+    
+    def respond(self, user_input):
+        self.context.append(user_input)
+        
+        # Ground input to visual concepts
+        concepts = self.ground_input(user_input)
+        
+        # Query knowledge graph
+        relevant = self.knowledge.query(concepts)
+        
+        # Generate response
+        return self.generate(relevant, self.context)
+```
 
 ---
 
