@@ -1,110 +1,266 @@
-# Brain-Like Visual Learning
+# CHPL: Compositional Hebbian Predictive Learning
 
-Official code for the paper:
-> **Brain-Like Visual Learning Shows Emergent Developmental Bias and Implicit Regularization**  
-> Ahmed Trabelsi  
-> 
+Official code for **Distributed Semantic Binding: From Synthetic Composition to Natural Scenes**
 
-## Overview
+> A unified architecture that develops from infant-level perception to adult-level cognition in ~20 minutes.
 
-We investigate whether brain-inspired plasticity rules can achieve cross-modal learning from scratch in a controlled synthetic environment. Using reconstruction-based predictive coding and Hebbian consolidation, our model (CHPL) learns to bind visual shapes with linguistic labels without supervised classification.
+---
 
-### Key Findings
+## 🎯 Key Results
 
-1. **Reduced Color Bias**: Brain-inspired learning (1.23 ± 0.09) shows significantly less categorization bias than supervised backpropagation (2.25 ± 0.48), $p < 0.00001$.
-2. **Emergent Development**: Naturally recapitulates the infant color-to-shape bias trajectory over 100 epochs (neutral → peak color bias → reduction).
-3. **Mechanistic Insights**: ATL consolidation is identified as critical for cross-modal alignment (+41% improvement, $d=1.44$).
+| Capability | Target | Achieved | Status |
+|------------|--------|----------|--------|
+| **Grounded Vocabulary** | 50,000 | 275,527 (94.9% coverage) | ✅ 551% |
+| **Knowledge Patterns** | 3,000 | 3,665 (hierarchical) | ✅ 122% |
+| **Observation Events** | 4,000 | 128,788 | ✅ 3,220% |
+| **Grammar Checking** | Working | Complete | ✅ |
 
-## Installation
+**Total training time: ~20 minutes on consumer GPU (RTX 4080)**
+
+---
+
+## 📁 Repository Structure
+
+```
+CHPL/
+├── 📄 Core Architecture
+│   ├── brain_crossmodal_learner.py    # Main CHPL model
+│   ├── synthetic_environment.py        # Visual stimulus generator
+│   └── synthetic_environment_hierarchical.py
+│
+├── 🧪 experiments/                     # All experimental scripts
+│   ├── Phase 1-2: Perception & Prediction
+│   │   ├── predictive_atl.py          # Temporal prediction
+│   │   ├── train_predictive_atl.py    # Train prediction
+│   │   └── test_predictive_hard.py    # Evaluate prediction
+│   │
+│   ├── Phase 3: Causal Reasoning
+│   │   ├── causal_atl.py              # Causal inference module
+│   │   ├── train_causal_atl.py        # Train causal reasoning
+│   │   └── synthetic_causal.py        # Causal environment
+│   │
+│   ├── Phase 4: Language & Composition
+│   │   ├── language_atl.py            # Language-vision binding
+│   │   ├── train_language_atl.py      # Train language
+│   │   ├── hierarchical_atl.py        # Hierarchical composition
+│   │   └── train_hierarchical_atl.py  # Train hierarchy
+│   │
+│   ├── Phase 5-8: Adult-Level Scaling
+│   │   ├── distributional_language.py # Wikipedia training
+│   │   ├── language_bootstrap.py      # Vocabulary expansion
+│   │   ├── ground_vocabulary.py       # COCO visual grounding
+│   │   ├── ground_vocabulary_multipass.py  # Semantic propagation
+│   │   ├── knowledge_graph.py         # Knowledge acquisition
+│   │   ├── video_learner.py           # Video pattern learning
+│   │   ├── batch_video_processor.py   # Batch video processing
+│   │   ├── dialogue_system.py         # Grammar-checked dialogue
+│   │   └── continuous_observer.py     # Real-time observation
+│   │
+│   └── Evaluation & Analysis
+│       ├── fair_baseline_comparison.py
+│       ├── mechanistic_analysis.py
+│       └── test_coco_subset.py
+│
+├── 📊 results/                         # Experimental results
+│   ├── ADULT_LEVEL_RESULTS.md         # Final adult-level metrics
+│   ├── ROADMAP_TO_CHILD.md            # Development phases 1-4
+│   ├── CHILD_TO_ADULT_RESULTS.md      # Scaling results
+│   └── FINAL_RESULTS.md               # Summary
+│
+├── 📝 paper/                           # Publication materials
+│   ├── distributed_atl_paper.tex      # Main LaTeX paper
+│   ├── distributed_atl_paper.pdf      # Compiled PDF
+│   └── figures/                        # All figures
+│
+└── 🗃️ models/                          # Trained models & data
+    └── knowledge_graph_full.pkl        # 3,665 knowledge patterns
+```
+
+---
+
+## 🚀 Quick Start
+
+### Installation
 
 ```bash
+git clone https://github.com/Diimoo/CHPL.git
+cd CHPL
 pip install -r requirements.txt
 ```
 
-Requires Python 3.8+ and PyTorch 2.0+ (CUDA recommended for faster validation).
+**Requirements:** Python 3.8+, PyTorch 2.0+, CUDA recommended
 
-## Quick Start
+### Run the Full Development Pipeline
 
-The model requires three-phase training (visual reconstruction → language alignment → cross-modal binding). For a complete working example, see `validation_study.py`.
+```bash
+# Phase 1-2: Perception & Prediction (2 min)
+python experiments/train_predictive_atl.py
+
+# Phase 3: Causal Reasoning (2 min)
+python experiments/train_causal_atl.py
+
+# Phase 4: Language & Composition (4 min)
+python experiments/train_language_atl.py
+python experiments/train_hierarchical_atl.py
+
+# Phase 5-8: Adult Scaling (11 min)
+python experiments/distributional_language.py  # Wikipedia vocabulary
+python experiments/ground_vocabulary.py        # COCO grounding
+python experiments/ground_vocabulary_multipass.py  # Semantic propagation
+```
+
+### Quick Demo
 
 ```python
 from brain_crossmodal_learner import BrainCrossModalLearner
 from synthetic_environment import create_stimulus
-from brain_crossmodal_learner import DEVICE
 import torch
 
 # Create model
 model = BrainCrossModalLearner(feature_dim=64, n_concepts=100)
 
-# Example inference (after training)
+# Process visual input
 img = create_stimulus(shape='circle', color='red', size='medium')
-img_t = torch.tensor(img, dtype=torch.float32).to(DEVICE)
+img_t = torch.tensor(img, dtype=torch.float32).cuda()
+
 with torch.no_grad():
-    vis_features = model.visual(img_t)
-    _, concept_idx = model.atl.activate(vis_features, 'visual')
-print(f"ATL concept: {concept_idx}")
-
-# For full training pipeline, see validation_study.py
+    features = model.visual(img_t)
+    _, concept = model.atl.activate(features, 'visual')
+    
+print(f"Activated concept: {concept}")
 ```
 
-## Reproducing Paper Results
+---
 
-### 1. Main Results (Ablation Study)
+## 📖 Development Phases
+
+### Phase 1-2: Perception & Prediction
+- **Goal:** Learn to predict next visual state
+- **Metric:** Prediction accuracy 0.946
+- **Time:** ~2 minutes
+
+### Phase 3: Causal Reasoning  
+- **Goal:** Infer cause-effect from observation
+- **Metric:** Causal accuracy 1.000
+- **Time:** ~2 minutes
+
+### Phase 4: Language & Composition
+- **Goal:** Bind language to vision, compose hierarchically
+- **Metrics:** Visual QA 0.860, Analogical reasoning 1.000
+- **Time:** ~4 minutes
+
+### Phase 5-8: Adult-Level Scaling
+- **Goal:** Scale to real-world vocabulary and knowledge
+- **Metrics:** 275,527 grounded words, 3,665 knowledge patterns
+- **Time:** ~11 minutes
+
+See [`results/ROADMAP_TO_CHILD.md`](results/ROADMAP_TO_CHILD.md) for detailed phase documentation.
+
+---
+
+## 🔬 Key Experiments
+
+| Experiment | Script | Description |
+|------------|--------|-------------|
+| **Compositional Generalization** | `experiments/train_two_object_distributed.py` | Multi-object scene understanding |
+| **COCO Natural Images** | `experiments/test_coco_subset.py` | Real image evaluation |
+| **Vocabulary Grounding** | `experiments/ground_vocabulary_multipass.py` | 275k word grounding |
+| **Video Knowledge** | `experiments/batch_video_processor.py` | Extract patterns from video |
+| **Dialogue System** | `experiments/dialogue_system.py` | Grammar-checked conversation |
+| **Continuous Observation** | `experiments/continuous_observer.py` | Real-time event detection |
+
+---
+
+## 📈 Reproducing Paper Results
+
+### Main Validation (Table 1)
 ```bash
-python validation_study.py
+python validation_study.py  # 10 seeds, 4 conditions
 ```
-Runs 10 random seeds across 4 conditions (Full, No-Recon, No-Consol, Backprop).  
-Results saved to `results/validation_results/`.
 
-### 2. Developmental Trajectory
+### Compositional Generalization (Table 2)
 ```bash
-python extended_training.py
+python experiments/train_two_object_distributed.py
+python experiments/test_hierarchical_composition.py
 ```
-Tracks bias emergence over 100 epochs (3 seeds).  
-Results saved to `results/extended_training_results/`.
 
-### 3. Generate Figures
-**Note:** Figure generation requires completed validation and trajectory runs.
+### Adult-Level Scaling (Table 3)
 ```bash
-# First ensure data exists
-python validation_study.py      # Creates results/validation_results/
-python extended_training.py     # Creates results/extended_training_results/
+# Full pipeline - see results/ADULT_LEVEL_RESULTS.md
+python experiments/distributional_language.py
+python experiments/ground_vocabulary_multipass.py
+python experiments/batch_video_processor.py
+```
 
-# Then generate figures
+### Generate Figures
+```bash
 python generate_figures.py
+python experiments/make_figures.py
 ```
-Generates publication-quality figures:
-- Paper figures (in `paper/`):
-  - `figure1_ablation_results.pdf`
-  - `figure2_developmental_trajectory.pdf`
-  - `figure3_language_ablation.pdf`
 
-## Project Structure
+---
 
-- `brain_crossmodal_learner.py`: Core model implementation (CHPL).
-- `synthetic_environment.py`: Synthetic visual-linguistic stimulus generator.
-- `validation_study.py`: Statistical validation script (10 seeds).
-- `extended_training.py`: Long-term trajectory tracking (100 epochs).
-- `generate_figures.py`: Figure generation script.
-- `paper/`: LaTeX and Markdown drafts of the paper.
-- `results/`: Output directory for validation and trajectory data (generated by running scripts).
-- `docs/FINDINGS.md`: Summary of key scientific findings.
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [`results/ROADMAP_TO_CHILD.md`](results/ROADMAP_TO_CHILD.md) | Development phases 1-4 roadmap |
+| [`results/ADULT_LEVEL_RESULTS.md`](results/ADULT_LEVEL_RESULTS.md) | Final adult-level metrics |
+| [`results/CHILD_TO_ADULT_RESULTS.md`](results/CHILD_TO_ADULT_RESULTS.md) | Scaling experiments |
+| [`docs/FINDINGS.md`](docs/FINDINGS.md) | Key scientific findings |
+| [`paper/distributed_atl_paper.tex`](paper/distributed_atl_paper.tex) | Full paper (LaTeX) |
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    CHPL Architecture                         │
+├─────────────────────────────────────────────────────────────┤
+│  Visual Cortex          Language Cortex                      │
+│  ┌──────────┐           ┌──────────┐                        │
+│  │ CNN/ViT  │           │ Word2Vec │                        │
+│  │ Encoder  │           │ Embedder │                        │
+│  └────┬─────┘           └────┬─────┘                        │
+│       │                      │                               │
+│       └──────────┬───────────┘                               │
+│                  ▼                                           │
+│         ┌───────────────┐                                    │
+│         │ Distributed   │  Soft activation over              │
+│         │     ATL       │  200 prototypes (τ=0.2)            │
+│         │  (Semantic    │  Hebbian learning                  │
+│         │    Hub)       │                                    │
+│         └───────┬───────┘                                    │
+│                 │                                            │
+│    ┌────────────┼────────────┐                               │
+│    ▼            ▼            ▼                               │
+│ Prediction  Causality   Knowledge                            │
+│  Module      Module       Graph                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
 
 ## Citation
 
 ```bibtex
-@article{trabelsi2025brain,
-  title={Brain-Like Visual Learning Shows Emergent Developmental Bias and Implicit Regularization},
+@article{trabelsi2026distributed,
+  title={Distributed Semantic Binding: From Synthetic Composition to Natural Scenes},
   author={Trabelsi, Ahmed},
-  journal={arXiv preprint arXiv:XXXX.XXXXX},
-  year={2025}
+  journal={arXiv preprint},
+  year={2026}
 }
 ```
 
+---
+
 ## License
 
-MIT License - See LICENSE file for details.
+MIT License - See [LICENSE](LICENSE) for details.
+
+---
 
 ## Acknowledgments
 
-This work builds on principles from computational neuroscience and developmental psychology. The model architecture was inspired by the anterior temporal lobe's role in semantic memory consolidation.
+This work builds on principles from computational neuroscience (anterior temporal lobe semantic hub) and developmental psychology (infant cognitive development trajectories).
