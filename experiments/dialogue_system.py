@@ -399,6 +399,152 @@ class DialogueManager:
         }
 
 
+class GrammarCheckedDialogue(DialogueManager):
+    """
+    Dialogue manager with automatic grammar correction.
+    
+    Ensures all responses have:
+    - Proper capitalization
+    - Correct grammar
+    - Appropriate punctuation
+    """
+    
+    def __init__(self, brain=None, knowledge_graph=None):
+        super().__init__(brain, knowledge_graph)
+        
+        # Try to initialize grammar checker
+        self.grammar_tool = None
+        try:
+            import language_tool_python
+            self.grammar_tool = language_tool_python.LanguageTool('en-US')
+            print("Grammar checker initialized")
+        except ImportError:
+            print("Warning: language-tool-python not available, using basic grammar fixes")
+    
+    def correct_grammar(self, text: str) -> str:
+        """
+        Fix grammar errors in generated text.
+        
+        Common fixes:
+        - Subject-verb agreement
+        - Article usage (a/an/the)
+        - Verb tense consistency
+        - Punctuation
+        """
+        if self.grammar_tool is not None:
+            try:
+                matches = self.grammar_tool.check(text)
+                import language_tool_python
+                corrected = language_tool_python.utils.correct(text, matches)
+                return corrected
+            except Exception as e:
+                pass
+        
+        # Basic fixes if tool not available
+        return self._basic_grammar_fixes(text)
+    
+    def _basic_grammar_fixes(self, text: str) -> str:
+        """Apply basic grammar fixes without external tool."""
+        import re
+        
+        # Fix common contractions
+        contractions = [
+            (' i ', ' I '),
+            (' i\'m ', ' I\'m '),
+            (' i\'ve ', ' I\'ve '),
+            (' i\'ll ', ' I\'ll '),
+            (' i\'d ', ' I\'d '),
+            ('dont ', 'don\'t '),
+            ('cant ', 'can\'t '),
+            ('wont ', 'won\'t '),
+            ('isnt ', 'isn\'t '),
+            ('arent ', 'aren\'t '),
+            ('doesnt ', 'doesn\'t '),
+            ('didnt ', 'didn\'t '),
+            ('wasnt ', 'wasn\'t '),
+            ('werent ', 'weren\'t '),
+            ('hadnt ', 'hadn\'t '),
+            ('hasnt ', 'hasn\'t '),
+            ('havent ', 'haven\'t '),
+            ('wouldnt ', 'wouldn\'t '),
+            ('couldnt ', 'couldn\'t '),
+            ('shouldnt ', 'shouldn\'t '),
+            ('thats ', 'that\'s '),
+            ('whats ', 'what\'s '),
+            ('heres ', 'here\'s '),
+            ('theres ', 'there\'s '),
+            ('lets ', 'let\'s '),
+        ]
+        
+        result = text
+        for old, new in contractions:
+            result = result.replace(old, new)
+        
+        # Fix subject-verb agreement patterns
+        agreement_fixes = [
+            (r'\b(the ball|it|he|she) are\b', r'\1 is'),
+            (r'\b(they|we|you) is\b', r'\1 are'),
+            (r'\bwhere is (\w+s)\b', r'where are \1'),
+            (r'\bwhy it (\w+)\b', r'why does it \1'),
+        ]
+        
+        for pattern, replacement in agreement_fixes:
+            result = re.sub(pattern, replacement, result, flags=re.IGNORECASE)
+        
+        # Fix a/an usage
+        result = re.sub(r'\ba ([aeiouAEIOU])', r'an \1', result)
+        result = re.sub(r'\ban ([^aeiouAEIOU\s])', r'a \1', result)
+        
+        # Remove double spaces
+        while '  ' in result:
+            result = result.replace('  ', ' ')
+        
+        return result
+    
+    def ensure_proper_form(self, text: str) -> str:
+        """
+        Enforce proper sentence structure.
+        
+        Rules:
+        - Capitalize first letter
+        - End with punctuation (. ! ?)
+        - No double spaces
+        """
+        if not text:
+            return text
+        
+        # Capitalize first letter
+        if not text[0].isupper():
+            text = text[0].upper() + text[1:]
+        
+        # Add period if missing punctuation
+        if text[-1] not in '.!?':
+            text = text + '.'
+        
+        # Remove double spaces
+        while '  ' in text:
+            text = text.replace('  ', ' ')
+        
+        return text
+    
+    def respond(self, user_input: str, context: Optional[Dict] = None) -> str:
+        """
+        Generate response with grammar checking.
+        
+        Full pipeline: generate → grammar check → proper form.
+        """
+        # Get base response
+        response = super().respond(user_input, context)
+        
+        # Apply grammar correction
+        response = self.correct_grammar(response)
+        
+        # Ensure proper form
+        response = self.ensure_proper_form(response)
+        
+        return response
+
+
 def run_dialogue_demo():
     """Demo the dialogue system."""
     print("=" * 70)

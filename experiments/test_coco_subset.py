@@ -7,7 +7,7 @@ Uses a small subset (100-500 images) for fast iteration.
 """
 
 import sys
-sys.path.insert(0, '/home/ahmed/Dokumente/Neuroscience/CHPL')
+sys.path.insert(0, '/home/ahmed/Dokumente/Neuroscience/CHPL-exploration')
 
 import argparse
 import json

@@ -8,7 +8,7 @@ Test if Distributed ATL can handle nested relations:
 """
 
 import sys
-sys.path.insert(0, '/home/ahmed/Dokumente/Neuroscience/CHPL')
+sys.path.insert(0, '/home/ahmed/Dokumente/Neuroscience/CHPL-exploration')
 
 import argparse
 import json
