@@ -216,27 +216,27 @@ python experiments/make_figures.py
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    CHPL Architecture                         │
+│                    CHPL Architecture                        │
 ├─────────────────────────────────────────────────────────────┤
-│  Visual Cortex          Language Cortex                      │
+│  Visual Cortex          Language Cortex                     │
 │  ┌──────────┐           ┌──────────┐                        │
 │  │ CNN/ViT  │           │ Word2Vec │                        │
 │  │ Encoder  │           │ Embedder │                        │
 │  └────┬─────┘           └────┬─────┘                        │
-│       │                      │                               │
-│       └──────────┬───────────┘                               │
-│                  ▼                                           │
-│         ┌───────────────┐                                    │
-│         │ Distributed   │  Soft activation over              │
-│         │     ATL       │  200 prototypes (τ=0.2)            │
-│         │  (Semantic    │  Hebbian learning                  │
-│         │    Hub)       │                                    │
-│         └───────┬───────┘                                    │
-│                 │                                            │
-│    ┌────────────┼────────────┐                               │
-│    ▼            ▼            ▼                               │
-│ Prediction  Causality   Knowledge                            │
-│  Module      Module       Graph                              │
+│       │                      │                              │
+│       └──────────┬───────────┘                              │
+│                  ▼                                          │
+│         ┌───────────────┐                                   │
+│         │ Distributed   │  Soft activation over             │
+│         │     ATL       │  200 prototypes (τ=0.2)           │
+│         │  (Semantic    │  Hebbian learning                 │
+│         │    Hub)       │                                   │
+│         └───────┬───────┘                                   │
+│                 │                                           │
+│    ┌────────────┼────────────┐                              │
+│    ▼            ▼            ▼                              │
+│ Prediction  Causality   Knowledge                           │
+│  Module      Module       Graph                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
